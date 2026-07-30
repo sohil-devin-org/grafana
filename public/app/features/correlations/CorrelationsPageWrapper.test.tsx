@@ -17,11 +17,9 @@ const mockUseCorrelationsK8s = jest.fn().mockReturnValue({
   remainingItems: 0,
 });
 
-jest.mock('./useCorrelations', () => ({
+jest.mock('@grafana/correlations', () => ({
+  ...jest.requireActual('@grafana/correlations'),
   useCorrelations: () => mockUseCorrelations(),
-}));
-
-jest.mock('./useCorrelationsK8s', () => ({
   useCorrelationsK8s: () => mockUseCorrelationsK8s(),
 }));
 

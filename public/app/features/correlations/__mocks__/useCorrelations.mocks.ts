@@ -2,15 +2,14 @@ import { merge } from 'lodash';
 import { type DeepPartial } from 'react-hook-form';
 import { DatasourceSrvMock } from 'test/mocks/datasource_srv';
 
-import { type DataSourceApi, type DataSourceInstanceSettings } from '@grafana/data';
-import { type FetchError, type FetchResponse } from '@grafana/runtime';
-
 import {
   type Correlation,
   type CreateCorrelationResponse,
   type RemoveCorrelationResponse,
   type UpdateCorrelationResponse,
-} from '../types';
+} from '@grafana/correlations';
+import { type DataSourceApi, type DataSourceInstanceSettings } from '@grafana/data';
+import { type FetchError, type FetchResponse } from '@grafana/runtime';
 
 export function createFetchCorrelationsResponse<T>(overrides?: DeepPartial<FetchResponse>): FetchResponse<T> {
   return merge(

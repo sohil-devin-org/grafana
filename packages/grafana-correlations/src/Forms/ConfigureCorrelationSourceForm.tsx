@@ -3,11 +3,11 @@ import { Controller, useFormContext } from 'react-hook-form';
 
 import { type DataSourceInstanceSettings, type GrafanaTheme2 } from '@grafana/data';
 import { Trans, t } from '@grafana/i18n';
+import { getDataSourceSrv } from '@grafana/runtime';
 import { Card, Field, FieldSet, Input, Stack, useStyles2 } from '@grafana/ui';
-import { DataSourcePicker } from 'app/features/datasources/components/picker/DataSourcePicker';
-import { getDatasourceSrv } from 'app/features/plugins/datasource_srv';
 
-import { getVariableUsageInfo } from '../../explore/utils/links';
+import { CorrelationsDataSourcePicker } from '../components/DataSourcePicker';
+import { getVariableUsageInfo } from '../utils/getVariableUsageInfo';
 
 import { TransformationsEditor } from './TransformationsEditor';
 import { useCorrelationsFormContext } from './correlationsFormContext';
@@ -65,7 +65,7 @@ export const ConfigureCorrelationSourceForm = () => {
   const variables = getVariableUsageInfo(currentTargetQuery, {}).variables.map(
     (variable) => variable.variableName + (variable.fieldPath ? `.${variable.fieldPath}` : '')
   );
-  const dataSourceName = getDatasourceSrv().getInstanceSettings(getValues('targetUID'))?.name;
+  const dataSourceName = getDataSourceSrv().getInstanceSettings(getValues('targetUID'))?.name;
 
   const formText = getFormText(currentType, dataSourceName);
 
@@ -116,7 +116,7 @@ export const ConfigureCorrelationSourceForm = () => {
                 invalid={!!formState.errors.sourceUID}
                 error={formState.errors.sourceUID?.message}
               >
-                <DataSourcePicker
+                <CorrelationsDataSourcePicker
                   onChange={withDsUID(onChange)}
                   noDefault
                   current={value}

@@ -5,8 +5,8 @@ import { useCreateCorrelationMutation } from '@grafana/api-clients/rtkq/correlat
 import { type GrafanaTheme2 } from '@grafana/data';
 import { config } from '@grafana/runtime';
 import { PanelContainer, useStyles2 } from '@grafana/ui';
-import { CloseButton } from 'app/core/components/CloseButton/CloseButton';
 
+import { CloseButton } from '../components/CloseButton';
 import { Wizard } from '../components/Wizard/Wizard';
 import { useCorrelations } from '../useCorrelations';
 import { generateAddSpec } from '../utils';

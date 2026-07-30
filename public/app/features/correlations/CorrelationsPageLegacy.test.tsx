@@ -7,6 +7,7 @@ import { TestProvider } from 'test/helpers/TestProvider';
 import { MockDataSourceApi } from 'test/mocks/datasource_srv';
 import { getGrafanaContextMock } from 'test/mocks/getGrafanaContextMock';
 
+import { type Correlation, type CreateCorrelationParams, type OmitUnion } from '@grafana/correlations';
 import { SupportedTransformationType } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import {
@@ -15,6 +16,7 @@ import {
   type DataSourceSrv,
   type reportInteraction,
   setAppEvents,
+  setBackendSrv,
   setDataSourceSrv,
 } from '@grafana/runtime';
 import { mockBoundingClientRect } from '@grafana/test-utils';
@@ -33,7 +35,6 @@ import {
   createUpdateCorrelationResponse,
   MockDataSourceSrv,
 } from './__mocks__/useCorrelations.mocks';
-import { type Correlation, type CreateCorrelationParams, type OmitUnion } from './types';
 
 // Set app events up, otherwise plugin modules will fail to load
 setAppEvents(appEvents);
@@ -98,6 +99,7 @@ const renderWithContext = async (
       });
     },
   } as unknown as BackendSrv;
+  setBackendSrv(backend);
   const grafanaContext = getGrafanaContextMock({ backend });
   const dsServer = new MockDataSourceSrv(datasources) as unknown as DataSourceSrv;
   dsServer.get = (name: string) => {

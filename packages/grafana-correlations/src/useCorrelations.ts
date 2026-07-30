@@ -1,9 +1,8 @@
 import { useAsyncFn } from 'react-use';
 import { lastValueFrom } from 'rxjs';
 
-import { type FetchResponse, type CorrelationData, type CorrelationsData } from '@grafana/runtime';
+import { type FetchResponse, type CorrelationData, type CorrelationsData, getBackendSrv } from '@grafana/runtime';
 import { getDataSourceInstanceSettings, getLogger } from '@grafana/runtime/unstable';
-import { useGrafana } from 'app/core/context/GrafanaContext';
 
 import {
   type Correlation,
@@ -95,7 +94,7 @@ export function getData<T>(response: FetchResponse<T>) {
  * expose this we'll have to remove those side effects.
  */
 export const useCorrelations = () => {
-  const { backend } = useGrafana();
+  const backend = getBackendSrv();
 
   const [getInfo, get] = useAsyncFn<(params: GetCorrelationsParams) => Promise<CorrelationsData>>(
     async (params) => {

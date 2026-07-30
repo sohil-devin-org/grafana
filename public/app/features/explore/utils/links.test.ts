@@ -1,3 +1,4 @@
+import { getVariableUsageInfo } from '@grafana/correlations';
 import {
   CoreApp,
   type DataFrame,
@@ -17,7 +18,7 @@ import { initTemplateSrv } from '../../../../test/helpers/initTemplateSrv';
 import { type ContextSrv, setContextSrv } from '../../../core/services/context_srv';
 import { setLinkSrv } from '../../panel/panellinks/link_srv';
 
-import { getFieldLinksForExplore, getVariableUsageInfo } from './links';
+import { getFieldLinksForExplore } from './links';
 
 jest.mock('@grafana/runtime', () => ({
   ...jest.requireActual('@grafana/runtime'),
