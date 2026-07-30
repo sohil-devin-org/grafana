@@ -6,7 +6,7 @@ import { type GrafanaTheme2, locationUtil } from '@grafana/data';
 import { t } from '@grafana/i18n';
 import { LoadingBar, TagList, useStyles2 } from '@grafana/ui';
 
-import { type DeepSearchDashboardResult } from './actions/deepSearchActions';
+import { type DeepSearchDashboardResult } from './types';
 
 /**
  * Imperative handle so the palette-wide keyboard navigation (RenderResults)

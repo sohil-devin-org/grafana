@@ -10,7 +10,6 @@ import { type GrafanaTheme2 } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { t } from '@grafana/i18n';
 import { reportInteraction } from '@grafana/runtime';
-import { useFlagDashboardVectorSearch, useFlagGrafanaVectorSearchCmdk } from '@grafana/runtime/internal';
 import { EmptyState, Icon, LoadingBar, useStyles2 } from '@grafana/ui';
 
 import { AskAssistantPill } from './AskAssistantPill';
@@ -18,22 +17,31 @@ import { type DeepSearchNavHandle, DeepSearchResults } from './DeepSearchResults
 import { KBarResults } from './KBarResults';
 import { KBarSearch } from './KBarSearch';
 import { ResultItem } from './ResultItem';
-import { useSearchResults } from './actions/dashboardActions';
-import { type DeepSearchDashboardResult, useDeepSearchResults } from './actions/deepSearchActions';
-import { useRegisterRecentDashboardsActions, useRegisterStaticActions } from './actions/useActions';
 import { bucketQueryLength } from './bucketQueryLength';
+import {
+  type CommandPaletteExtensions,
+  CommandPaletteExtensionsContext,
+  defaultCommandPaletteExtensions,
+  useCommandPaletteExtensions,
+} from './extensions';
 import { resetCommandPaletteInputMode, setCommandPaletteInputMode } from './inputMode';
-import { useRegisterRecentScopesActions, useRegisterScopesActions } from './scopes/scopeActions';
-import { type CommandPaletteAction, getActionSectionId } from './types';
+import { type CommandPaletteAction, type DeepSearchDashboardResult, getActionSectionId } from './types';
 import { useMatches } from './useMatches';
 import { SECTION_DEEP_SEARCH } from './values';
 
-export function CommandPalette() {
-  useRegisterStaticActions();
+export interface CommandPaletteProps {
+  /** App-specific action sources; see CommandPaletteExtensions. */
+  extensions?: CommandPaletteExtensions;
+}
+
+export function CommandPalette({ extensions = defaultCommandPaletteExtensions }: CommandPaletteProps) {
+  extensions.useRegisterStaticActions();
   return (
-    <KBarPortal>
-      <CommandPaletteContents />
-    </KBarPortal>
+    <CommandPaletteExtensionsContext.Provider value={extensions}>
+      <KBarPortal>
+        <CommandPaletteContents />
+      </KBarPortal>
+    </CommandPaletteExtensionsContext.Provider>
   );
 }
 
@@ -52,25 +60,25 @@ function CommandPaletteContents() {
     currentRootActionId: state.currentRootActionId,
   }));
 
-  useRegisterRecentDashboardsActions();
-  useRegisterRecentScopesActions();
+  const extensions = useCommandPaletteExtensions();
+  extensions.useRegisterRecentDashboardsActions();
+  extensions.useRegisterRecentScopesActions();
 
   const queryToggle = useCallback(() => query.toggle(), [query]);
-  const { scopesRow } = useRegisterScopesActions(searchQuery, queryToggle, currentRootActionId);
+  const { scopesRow } = extensions.useRegisterScopesActions(searchQuery, queryToggle, currentRootActionId);
 
   // This searches dashboards and folders it shows only if we are not in some specific category (and there is no
   // dashboards category right now, so if any category is selected, we don't show these).
   // Normally we register actions with kbar, and it knows not to show actions which are under a different parent than is
   // the currentRootActionId. Because these search results are manually added to the list later, they would show every
   // time.
-  const { searchResults, isFetchingSearchResults } = useSearchResults({ searchQuery, show: !currentRootActionId });
+  const { searchResults, isFetchingSearchResults } = extensions.useSearchResults({
+    searchQuery,
+    show: !currentRootActionId,
+  });
 
-  // Call both hooks unconditionally (rules-of-hooks), then require both: the backend
-  // vector-search endpoint flag and the command-palette flag
-  const dashboardVectorSearchEnabled = useFlagDashboardVectorSearch();
-  const vectorSearchCmdkEnabled = useFlagGrafanaVectorSearchCmdk();
-  const deepSearchEnabled = dashboardVectorSearchEnabled && vectorSearchCmdkEnabled;
-  const { deepSearchResults, isFetchingDeepSearchResults } = useDeepSearchResults({
+  const deepSearchEnabled = extensions.useIsDeepSearchEnabled();
+  const { deepSearchResults, isFetchingDeepSearchResults } = extensions.useDeepSearchResults({
     searchQuery,
     show: !currentRootActionId,
     enabled: deepSearchEnabled,

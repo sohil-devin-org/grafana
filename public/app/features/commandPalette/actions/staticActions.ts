@@ -1,6 +1,15 @@
 import { useBooleanFlagValue } from '@openfeature/react-sdk';
 import { useMemo } from 'react';
 
+import {
+  type CommandPaletteAction,
+  ACTIONS_PRIORITY,
+  DEFAULT_PRIORITY,
+  SECTION_ACTIONS,
+  SECTION_PAGES,
+  SECTION_PREFERENCES,
+  PREFERENCES_PRIORITY,
+} from '@grafana/command-palette';
 import { type NavModelItem } from '@grafana/data';
 import { t } from '@grafana/i18n';
 import { config, locationService } from '@grafana/runtime';
@@ -20,16 +29,6 @@ import { DashboardLibraryInteractions } from 'app/features/dashboard/dashgrid/Da
 import { useQueryLibraryContext } from 'app/features/explore/QueryLibrary/QueryLibraryContext';
 import { AccessControlAction } from 'app/types/accessControl';
 import { useSelector } from 'app/types/store';
-
-import { type CommandPaletteAction } from '../types';
-import {
-  ACTIONS_PRIORITY,
-  DEFAULT_PRIORITY,
-  SECTION_ACTIONS,
-  SECTION_PAGES,
-  SECTION_PREFERENCES,
-  PREFERENCES_PRIORITY,
-} from '../values';
 
 // TODO: Clean this once ID is mandatory on nav items
 function idForNavItem(navItem: NavModelItem) {

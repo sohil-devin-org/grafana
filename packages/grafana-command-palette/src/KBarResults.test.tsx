@@ -1,5 +1,7 @@
+import '@testing-library/jest-dom';
+
+import { render, screen } from '@testing-library/react';
 import { ActionImpl, useKBar } from 'kbar';
-import { render, screen } from 'test/test-utils';
 
 import { KBarResults } from './KBarResults';
 

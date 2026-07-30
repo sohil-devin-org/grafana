@@ -2,6 +2,7 @@ import { KBarProvider } from 'kbar';
 import { act, render, screen, userEvent } from 'test/test-utils';
 
 import { OpenAssistantButton, useAssistant } from '@grafana/assistant';
+import { type CommandPaletteAction, CommandPalette } from '@grafana/command-palette';
 import { reportInteraction, setBackendSrv, setPluginLinksHook } from '@grafana/runtime';
 import {
   setGetObservablePluginLinks,
@@ -14,8 +15,7 @@ import { backendSrv } from 'app/core/services/backend_srv';
 
 import { getObservablePluginLinks } from '../plugins/extensions/getPluginExtensions';
 
-import { CommandPalette } from './CommandPalette';
-import { type CommandPaletteAction } from './types';
+import { commandPaletteExtensions } from './extensions';
 
 setPluginLinksHook(() => ({
   links: [],
@@ -52,7 +52,7 @@ jest.mock('kbar', () => ({
 const setup = () => {
   return render(
     <KBarProvider>
-      <CommandPalette />
+      <CommandPalette extensions={commandPaletteExtensions} />
     </KBarProvider>
   );
 };
@@ -380,7 +380,7 @@ describe('CommandPalette', () => {
       ];
       render(
         <KBarProvider actions={actions}>
-          <CommandPalette />
+          <CommandPalette extensions={commandPaletteExtensions} />
         </KBarProvider>
       );
       const user = userEvent.setup();

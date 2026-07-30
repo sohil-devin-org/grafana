@@ -1,11 +1,10 @@
 import { useRegisterActions } from 'kbar';
 import { useEffect, useMemo, useState } from 'react';
 
-import { type CommandPaletteAction } from '../types';
+import { type CommandPaletteAction, useExtensionActions } from '@grafana/command-palette';
 
 import { getRecentDashboardActions } from './dashboardActions';
 import { useStaticActions } from './staticActions';
-import useExtensionActions from './useExtensionActions';
 
 /**
  * Register navigation actions to different parts of grafana or some preferences stuff like themes.

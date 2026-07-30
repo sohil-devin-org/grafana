@@ -2,6 +2,7 @@ import { type ActionImpl } from 'kbar';
 import { type ReactNode } from 'react';
 import { getWrapper, renderHook } from 'test/test-utils';
 
+import { type CommandPaletteAction } from '@grafana/command-palette';
 import { type DataSourceInstanceListItem } from '@grafana/data';
 import { config } from '@grafana/runtime';
 import { useDataSourceInstanceList } from '@grafana/runtime/unstable';
@@ -10,8 +11,6 @@ import { contextSrv } from 'app/core/services/context_srv';
 import { getDashboardTemplatesTab } from 'app/features/dashboard/dashgrid/DashboardLibrary/enterprise-components/DashboardTemplatesTabExtension';
 import { configureStore } from 'app/store/configureStore';
 import { type UserPermission, AccessControlAction } from 'app/types/accessControl';
-
-import { type CommandPaletteAction } from '../types';
 
 import { useStaticActions } from './staticActions';
 

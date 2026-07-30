@@ -2,13 +2,13 @@ import { renderHook } from '@testing-library/react';
 import { setIn } from 'immutable';
 import { Observable, of } from 'rxjs';
 
+import { SCOPES_PRIORITY } from '@grafana/command-palette';
 import { type Scope, type ScopeNode } from '@grafana/data';
 import { useObservable } from '@grafana/data/unstable';
 
 import { useScopesServices } from '../../scopes/ScopesContextProvider';
 import { type ScopesSelectorServiceState } from '../../scopes/selector/ScopesSelectorService';
 import { type NodesMap, type SelectedScope, type TreeNode } from '../../scopes/selector/types';
-import { SCOPES_PRIORITY } from '../values';
 
 import { mapScopeNodeToAction, mapScopesNodesTreeToActions, useScopeServicesState } from './scopesUtils';
 

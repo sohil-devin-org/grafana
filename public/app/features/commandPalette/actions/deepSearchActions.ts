@@ -1,6 +1,7 @@
 import debounce from 'debounce-promise';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { type DeepSearchDashboardResult } from '@grafana/command-palette';
 import { getGrafanaSearcher } from 'app/features/search/service/searcher';
 
 import { type DeepSearchPanelResult, searchDashboardVector } from '../api/deepSearch';
@@ -16,29 +17,6 @@ const RELEVANCE_MARGIN = 0.2;
 // Vector search is slower than the keyword search (200ms debounce), so wait
 // longer before firing — the deep column loads independently anyway
 const DEEP_SEARCH_DEBOUNCE_MS = 500;
-
-/** A single matched panel shown under a dashboard card. */
-interface DeepSearchSnippet {
-  text: string;
-  /** Cosine distance for this panel match (lower = closer). */
-  score: number;
-}
-
-/** One dashboard in the deep search column, aggregated from its panel-level matches. */
-export interface DeepSearchDashboardResult {
-  dashboardUid: string;
-  title: string;
-  url: string;
-  folderTitle?: string;
-  /** Dashboard tags, parsed from the matched panel snippet. */
-  tags: string[];
-  /** Up to MAX_SNIPPETS_PER_DASHBOARD matched panel snippets, best match first. */
-  snippets: DeepSearchSnippet[];
-  /** Total panel-level matches for this dashboard (can exceed snippets shown). */
-  matchedPanelCount: number;
-  /** Lowest cosine distance among this dashboard's matches (lower = closer). */
-  bestScore: number;
-}
 
 // Separator the backend uses to join the snippet breadcrumb
 // (folderTitle → dashboardTitle → rowName → panelTitle → description).

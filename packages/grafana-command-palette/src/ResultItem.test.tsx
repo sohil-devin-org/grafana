@@ -1,9 +1,11 @@
-import { ActionImpl } from 'kbar';
-import { render, screen } from 'test/test-utils';
+import '@testing-library/jest-dom';
 
-import { ManagerKind } from 'app/features/apiserver/types';
+import { render, screen } from '@testing-library/react';
+import { ActionImpl } from 'kbar';
+import { type ReactNode } from 'react';
 
 import { ResultItem } from './ResultItem';
+import { CommandPaletteExtensionsContext, defaultCommandPaletteExtensions } from './extensions';
 
 function createActionImpl(props: Record<string, unknown> = {}): ActionImpl {
   const action = {
@@ -14,6 +16,19 @@ function createActionImpl(props: Record<string, unknown> = {}): ActionImpl {
   return ActionImpl.create(action, { store: {} });
 }
 
+function renderWithBadge(ui: ReactNode) {
+  return render(
+    <CommandPaletteExtensionsContext.Provider
+      value={{
+        ...defaultCommandPaletteExtensions,
+        renderManagedBadge: (managedBy) => <span data-testid="managed-badge">{managedBy}</span>,
+      }}
+    >
+      {ui}
+    </CommandPaletteExtensionsContext.Provider>
+  );
+}
+
 describe('ResultItem', () => {
   it('renders the action name', () => {
     const action = createActionImpl();
@@ -21,28 +36,22 @@ describe('ResultItem', () => {
     expect(screen.getByText('Test Dashboard')).toBeInTheDocument();
   });
 
-  it('renders the managed badge when managedBy is Repo', () => {
-    const action = createActionImpl({ managedBy: ManagerKind.Repo });
-    render(<ResultItem action={action} active={false} currentRootActionId="" />);
-    expect(screen.getByTestId('icon-exchange-alt')).toBeInTheDocument();
+  it('renders the managed badge when managedBy is set', () => {
+    const action = createActionImpl({ managedBy: 'repo' });
+    renderWithBadge(<ResultItem action={action} active={false} currentRootActionId="" />);
+    expect(screen.getByTestId('managed-badge')).toBeInTheDocument();
   });
 
   it('does not render the managed badge when managedBy is undefined', () => {
     const action = createActionImpl();
-    render(<ResultItem action={action} active={false} currentRootActionId="" />);
-    expect(screen.queryByTestId('icon-exchange-alt')).not.toBeInTheDocument();
+    renderWithBadge(<ResultItem action={action} active={false} currentRootActionId="" />);
+    expect(screen.queryByTestId('managed-badge')).not.toBeInTheDocument();
   });
 
-  it('renders the managed badge when managedBy is a non-Repo kind', () => {
-    const action = createActionImpl({ managedBy: ManagerKind.Terraform });
+  it('does not render the managed badge when the extension point does not provide one', () => {
+    const action = createActionImpl({ managedBy: 'repo' });
     render(<ResultItem action={action} active={false} currentRootActionId="" />);
-    expect(screen.getByTestId('icon-exchange-alt')).toBeInTheDocument();
-  });
-
-  it('renders the managed badge for plugin-managed resources', () => {
-    const action = createActionImpl({ managedBy: ManagerKind.Plugin });
-    render(<ResultItem action={action} active={false} currentRootActionId="" />);
-    expect(screen.getByTestId('icon-exchange-alt')).toBeInTheDocument();
+    expect(screen.queryByTestId('managed-badge')).not.toBeInTheDocument();
   });
 
   it('appends an ellipsis to a parent action that has children but no command or link', () => {

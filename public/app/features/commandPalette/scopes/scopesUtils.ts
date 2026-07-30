@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs';
 
+import { type CommandPaletteAction, SECTION_SCOPES, SCOPES_PRIORITY } from '@grafana/command-palette';
 import { type ScopeNode } from '@grafana/data';
 import { useObservable } from '@grafana/data/unstable';
 import { t } from '@grafana/i18n';
@@ -7,8 +8,6 @@ import { t } from '@grafana/i18n';
 import { useScopesServices } from '../../scopes/ScopesContextProvider';
 import { type ScopesSelectorServiceState } from '../../scopes/selector/ScopesSelectorService';
 import { type NodesMap, type SelectedScope, type TreeNode } from '../../scopes/selector/types';
-import { type CommandPaletteAction } from '../types';
-import { SECTION_SCOPES, SCOPES_PRIORITY } from '../values';
 
 const defaultState: ScopesSelectorServiceState = {
   loading: false,
