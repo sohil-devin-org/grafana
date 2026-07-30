@@ -1,4 +1,52 @@
 {
+  "packages/grafana-auth-config/src/FieldRenderer.tsx": {
+    "@grafana/require-no-margin": {
+      "count": 5
+    }
+  },
+  "packages/grafana-auth-config/src/ProviderConfigForm.tsx": {
+    "@grafana/require-no-margin": {
+      "count": 1
+    }
+  },
+  "packages/grafana-auth-config/src/components/ServerDiscoveryModal.tsx": {
+    "@grafana/require-no-margin": {
+      "count": 1
+    }
+  },
+  "packages/grafana-auth-config/src/utils/data.ts": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 1
+    }
+  },
+  "packages/grafana-correlations/src/Forms/ConfigureCorrelationBasicInfoForm.tsx": {
+    "@grafana/require-no-margin": {
+      "count": 2
+    }
+  },
+  "packages/grafana-correlations/src/Forms/ConfigureCorrelationTargetForm.tsx": {
+    "@grafana/require-no-margin": {
+      "count": 3
+    },
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 2
+    }
+  },
+  "packages/grafana-correlations/src/Forms/QueryEditorField.tsx": {
+    "@grafana/require-no-margin": {
+      "count": 1
+    }
+  },
+  "packages/grafana-correlations/src/Forms/TransformationEditorRow.tsx": {
+    "@grafana/require-no-margin": {
+      "count": 4
+    }
+  },
+  "packages/grafana-correlations/src/types.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
   "packages/grafana-data/src/dataframe/CircularDataFrame.ts": {
     "@typescript-eslint/no-explicit-any": {
       "count": 1
@@ -312,6 +360,31 @@
       "count": 1
     }
   },
+  "packages/grafana-migrate-to-cloud/src/cloud/MigrationTokenPane/CreateTokenModal.tsx": {
+    "@grafana/require-no-margin": {
+      "count": 1
+    }
+  },
+  "packages/grafana-migrate-to-cloud/src/onprem/ConfigureSnapshot.tsx": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 2
+    }
+  },
+  "packages/grafana-migrate-to-cloud/src/onprem/EmptyState/CallToAction/ConnectModal.tsx": {
+    "@grafana/require-no-margin": {
+      "count": 1
+    }
+  },
+  "packages/grafana-migrate-to-cloud/src/onprem/resourceDependency.ts": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 2
+    }
+  },
+  "packages/grafana-migrate-to-cloud/src/onprem/useNotifyOnSuccess.tsx": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 1
+    }
+  },
   "packages/grafana-o11y-ds-frontend/src/TraceToProfiles/TraceToProfilesSettings.tsx": {
     "react-hooks/exhaustive-deps": {
       "count": 1
@@ -389,6 +462,21 @@
     },
     "@typescript-eslint/no-explicit-any": {
       "count": 2
+    }
+  },
+  "packages/grafana-serviceaccounts/src/ServiceAccountCreatePage.tsx": {
+    "@grafana/require-no-margin": {
+      "count": 4
+    }
+  },
+  "packages/grafana-serviceaccounts/src/components/CreateTokenModal.tsx": {
+    "@grafana/require-no-margin": {
+      "count": 4
+    }
+  },
+  "packages/grafana-serviceaccounts/src/state/reducers.ts": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 1
     }
   },
   "packages/grafana-sql/src/components/DatasetSelector.tsx": {
@@ -1303,57 +1391,9 @@
       "count": 2
     }
   },
-  "public/app/features/auth-config/FieldRenderer.tsx": {
-    "@grafana/require-no-margin": {
-      "count": 5
-    }
-  },
-  "public/app/features/auth-config/ProviderConfigForm.tsx": {
-    "@grafana/require-no-margin": {
-      "count": 1
-    }
-  },
-  "public/app/features/auth-config/components/ServerDiscoveryModal.tsx": {
-    "@grafana/require-no-margin": {
-      "count": 1
-    }
-  },
-  "public/app/features/auth-config/utils/data.ts": {
-    "@typescript-eslint/consistent-type-assertions": {
-      "count": 1
-    }
-  },
   "public/app/features/browse-dashboards/components/DeletedDashboardsLimitBanner.tsx": {
     "react-hooks/exhaustive-deps": {
       "count": 1
-    }
-  },
-  "public/app/features/correlations/Forms/ConfigureCorrelationBasicInfoForm.tsx": {
-    "@grafana/require-no-margin": {
-      "count": 2
-    }
-  },
-  "public/app/features/correlations/Forms/ConfigureCorrelationTargetForm.tsx": {
-    "@grafana/require-no-margin": {
-      "count": 3
-    },
-    "@typescript-eslint/consistent-type-assertions": {
-      "count": 2
-    }
-  },
-  "public/app/features/correlations/Forms/QueryEditorField.tsx": {
-    "@grafana/require-no-margin": {
-      "count": 1
-    }
-  },
-  "public/app/features/correlations/Forms/TransformationEditorRow.tsx": {
-    "@grafana/require-no-margin": {
-      "count": 4
-    }
-  },
-  "public/app/features/correlations/types.ts": {
-    "@typescript-eslint/no-explicit-any": {
-      "count": 2
     }
   },
   "public/app/features/dashboard-scene/addToDashboard/AddToDashboardForm.tsx": {
@@ -2004,31 +2044,6 @@
       "count": 1
     }
   },
-  "public/app/features/migrate-to-cloud/cloud/MigrationTokenPane/CreateTokenModal.tsx": {
-    "@grafana/require-no-margin": {
-      "count": 1
-    }
-  },
-  "public/app/features/migrate-to-cloud/onprem/ConfigureSnapshot.tsx": {
-    "@typescript-eslint/consistent-type-assertions": {
-      "count": 2
-    }
-  },
-  "public/app/features/migrate-to-cloud/onprem/EmptyState/CallToAction/ConnectModal.tsx": {
-    "@grafana/require-no-margin": {
-      "count": 1
-    }
-  },
-  "public/app/features/migrate-to-cloud/onprem/resourceDependency.ts": {
-    "@typescript-eslint/consistent-type-assertions": {
-      "count": 2
-    }
-  },
-  "public/app/features/migrate-to-cloud/onprem/useNotifyOnSuccess.tsx": {
-    "@typescript-eslint/consistent-type-assertions": {
-      "count": 1
-    }
-  },
   "public/app/features/org/NewOrgPage.tsx": {
     "@grafana/require-no-margin": {
       "count": 1
@@ -2202,21 +2217,6 @@
   "public/app/features/search/utils.ts": {
     "@grafana/no-direct-local-storage-access": {
       "count": 3
-    }
-  },
-  "public/app/features/serviceaccounts/ServiceAccountCreatePage.tsx": {
-    "@grafana/require-no-margin": {
-      "count": 4
-    }
-  },
-  "public/app/features/serviceaccounts/components/CreateTokenModal.tsx": {
-    "@grafana/require-no-margin": {
-      "count": 4
-    }
-  },
-  "public/app/features/serviceaccounts/state/reducers.ts": {
-    "@typescript-eslint/consistent-type-assertions": {
-      "count": 1
     }
   },
   "public/app/features/templating/fieldAccessorCache.ts": {

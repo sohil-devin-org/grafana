@@ -315,44 +315,50 @@ export function getAppRoutes(): RouteDescriptor[] {
           AccessControlAction.ServiceAccountsRead,
           AccessControlAction.ServiceAccountsCreate,
         ]),
-      component: SafeDynamicImport(
-        () =>
-          import(/* webpackChunkName: "ServiceAccountsPage" */ 'app/features/serviceaccounts/ServiceAccountsListPage')
+      component: SafeDynamicImport(() =>
+        import(/* webpackChunkName: "ServiceAccountsPage" */ 'app/features/serviceaccounts')
+          .then(() => import('@grafana/serviceaccounts'))
+          .then((m) => ({ default: m.ServiceAccountsListPage }))
       ),
     },
     {
       path: '/org/serviceaccounts/create',
-      component: SafeDynamicImport(
-        () =>
-          import(
-            /* webpackChunkName: "ServiceAccountCreatePage" */ 'app/features/serviceaccounts/ServiceAccountCreatePage'
-          )
+      component: SafeDynamicImport(() =>
+        import(/* webpackChunkName: "ServiceAccountCreatePage" */ 'app/features/serviceaccounts')
+          .then(() => import('@grafana/serviceaccounts'))
+          .then((m) => ({ default: m.ServiceAccountCreatePage }))
       ),
     },
     {
       path: '/org/serviceaccounts/:id',
-      component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "ServiceAccountPage" */ 'app/features/serviceaccounts/ServiceAccountPage')
+      component: SafeDynamicImport(() =>
+        import(/* webpackChunkName: "ServiceAccountPage" */ 'app/features/serviceaccounts')
+          .then(() => import('@grafana/serviceaccounts'))
+          .then((m) => ({ default: m.ServiceAccountPage }))
       ),
     },
     {
       path: '/org/teams',
       roles: () =>
         contextSrv.evaluatePermission([AccessControlAction.ActionTeamsRead, AccessControlAction.ActionTeamsCreate]),
-      component: SafeDynamicImport(() => import(/* webpackChunkName: "TeamList" */ 'app/features/teams/TeamList')),
+      component: SafeDynamicImport(() =>
+        import(/* webpackChunkName: "TeamList" */ 'app/features/teams').then((m) => ({ default: m.TeamList }))
+      ),
     },
     {
       path: '/org/teams/new',
       roles: () => contextSrv.evaluatePermission([AccessControlAction.ActionTeamsCreate]),
-      component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "CreateTeam" */ '../features/teams/create-team/CreateTeam')
+      component: SafeDynamicImport(() =>
+        import(/* webpackChunkName: "CreateTeam" */ 'app/features/teams').then((m) => ({ default: m.CreateTeam }))
       ),
     },
     {
       path: '/org/teams/edit/:uid/:page?',
       roles: () =>
         contextSrv.evaluatePermission([AccessControlAction.ActionTeamsRead, AccessControlAction.ActionTeamsCreate]),
-      component: SafeDynamicImport(() => import(/* webpackChunkName: "TeamPages" */ 'app/features/teams/TeamPages')),
+      component: SafeDynamicImport(() =>
+        import(/* webpackChunkName: "TeamPages" */ 'app/features/teams').then((m) => ({ default: m.TeamPages }))
+      ),
     },
     // ADMIN
     {
@@ -362,8 +368,10 @@ export function getAppRoutes(): RouteDescriptor[] {
     {
       path: '/admin/authentication',
       roles: () => contextSrv.evaluatePermission([AccessControlAction.SettingsWrite]),
-      component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "AdminAuthentication" */ '../features/auth-config/AuthProvidersListPage')
+      component: SafeDynamicImport(() =>
+        import(/* webpackChunkName: "AdminAuthentication" */ '@grafana/auth-config').then((m) => ({
+          default: m.AuthProvidersListPage,
+        }))
       ),
     },
     {
@@ -375,8 +383,10 @@ export function getAppRoutes(): RouteDescriptor[] {
     {
       path: '/admin/authentication/:provider',
       roles: () => contextSrv.evaluatePermission([AccessControlAction.SettingsWrite]),
-      component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "AdminAuthentication" */ '../features/auth-config/ProviderConfigPage')
+      component: SafeDynamicImport(() =>
+        import(/* webpackChunkName: "AdminAuthentication" */ '@grafana/auth-config').then((m) => ({
+          default: m.ProviderConfigPage,
+        }))
       ),
     },
     {

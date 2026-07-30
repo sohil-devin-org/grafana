@@ -1,21 +1,10 @@
 import { generatedAPI as correlationsAPIv0alpha1 } from '@grafana/api-clients/rtkq/correlations/v0alpha1';
-import {
-  type DataFrame,
-  DataFrameType,
-  type DataSourceInstanceSettings,
-  FieldType,
-  SupportedTransformationType,
-  toDataFrame,
-} from '@grafana/data';
+import { getCorrelationsBySourceUIDs } from '@grafana/correlations';
+import { type DataFrame, DataFrameType, type DataSourceInstanceSettings, FieldType, toDataFrame } from '@grafana/data';
 import { config, type CorrelationData } from '@grafana/runtime';
-import { type DataQuery } from '@grafana/schema/dist/esm/index';
 import { MIXED_DATASOURCE_NAME } from 'app/plugins/datasource/mixed/MixedDataSource';
-import { type ExploreItemState } from 'app/types/explore';
 
-import { type EditFormDTO, type FormDTO } from './Forms/types';
-import { type Correlation } from './types';
-import { attachCorrelationsToDataFrames, generateDefaultLabel, generatePartialEditSpec } from './utils';
-import * as utils from './utils';
+import { attachCorrelationsToDataFrames, getCorrelationsFromStorage } from './utils';
 
 jest.mock('@grafana/runtime/unstable', () => ({
   ...jest.requireActual('@grafana/runtime/unstable'),
@@ -27,11 +16,16 @@ jest.mock('@grafana/runtime/unstable', () => ({
   }),
 }));
 
+jest.mock('@grafana/correlations', () => ({
+  ...jest.requireActual('@grafana/correlations'),
+  getCorrelationsBySourceUIDs: jest.fn().mockResolvedValue({ correlations: [], page: 0, limit: 100, totalCount: 0 }),
+}));
+
 describe('correlations utils', () => {
   it('attaches correlations defined in the configuration', () => {
     config.featureToggles.lokiLogsDataplane = false;
     const { testDataFrames, correlations, refIdMap, prometheus, elastic } = setup();
-    utils.attachCorrelationsToDataFrames(testDataFrames, correlations, refIdMap);
+    attachCorrelationsToDataFrames(testDataFrames, correlations, refIdMap);
 
     // Loki line
     expect(testDataFrames[0].fields[0].config.links).toHaveLength(1);
@@ -109,8 +103,8 @@ describe('correlations utils', () => {
 
   it('does not create duplicates when attaching links to the same data frame', () => {
     const { testDataFrames, correlations, refIdMap } = setup();
-    utils.attachCorrelationsToDataFrames(testDataFrames, correlations, refIdMap);
-    utils.attachCorrelationsToDataFrames(testDataFrames, correlations, refIdMap);
+    attachCorrelationsToDataFrames(testDataFrames, correlations, refIdMap);
+    attachCorrelationsToDataFrames(testDataFrames, correlations, refIdMap);
 
     // Loki traceId (linked to Prometheus and Elastic)
     expect(testDataFrames[0].fields[1].config.links).toHaveLength(2);
@@ -134,118 +128,16 @@ describe('correlations utils', () => {
       ],
       meta: { type: DataFrameType.LogLines },
     });
-    const dataFrameOut = utils.attachCorrelationsToDataFrames([testDataFrame], [correlations[3]], refIdMap);
+    const dataFrameOut = attachCorrelationsToDataFrames([testDataFrame], [correlations[3]], refIdMap);
     expect(dataFrameOut[0].fields[1].config.links).toHaveLength(1);
     config.featureToggles.lokiLogsDataplane = originalDataplaneState;
   });
 
-  it('generates a partial spec with config and nulled target only when nothing is edited and the correlation is external', () => {
-    const correlation: Correlation = {
-      uid: 'test',
-      sourceUID: 'test',
-      label: 'test',
-      provisioned: false,
-      type: 'external',
-      config: { field: 'test', target: { url: 'test' } },
-    };
-    const editForm: EditFormDTO = { ...correlation, label: correlation.label! };
-    const partialSpec = generatePartialEditSpec(editForm, correlation);
-    expect(partialSpec).toStrictEqual({ config: { field: 'test', target: { url: 'test' } }, target: null });
-  });
-
-  it('generates a partial spec as expected when things are edited', () => {
-    const correlation: Correlation = {
-      uid: 'test',
-      sourceUID: 'test',
-      label: 'test',
-      provisioned: false,
-      type: 'external',
-      config: { field: 'test', target: { url: 'test' } },
-    };
-    const editForm: EditFormDTO = {
-      ...correlation,
-      label: 'diffLabel',
-      description: 'diffDesc',
-      type: 'query',
-      config: {
-        field: 'diffField',
-        target: { diff: 'target' },
-        transformations: [
-          {
-            type: SupportedTransformationType.Logfmt,
-            expression: 'diffExp',
-            mapValue: 'diffMapValue',
-            field: 'diffField',
-          },
-        ],
-      },
-    };
-    const partialSpec = generatePartialEditSpec(editForm, correlation);
-    expect(partialSpec).toStrictEqual({
-      label: 'diffLabel',
-      description: 'diffDesc',
-      type: 'query',
-      config: {
-        field: 'diffField',
-        target: { diff: 'target' },
-        transformations: [{ expression: 'diffExp', field: 'diffField', mapValue: 'diffMapValue', type: 'logfmt' }],
-      },
-    });
-  });
-
-  it('generates the expected label from pane datasource when not mixed', async () => {
-    const queries: DataQuery[] = [{ refId: 'A', datasource: { uid: 'testQuery' } }];
-    const sourcePane: ExploreItemState = {
-      datasourceInstance: { name: 'testA', meta: { mixed: false } },
-      queries: queries,
-      queryKeys: [],
-    } as unknown as ExploreItemState;
-    const targetPane: ExploreItemState = {
-      datasourceInstance: { name: 'testB', meta: { mixed: false } },
-      queries: queries,
-      queryKeys: [],
-    } as unknown as ExploreItemState;
-    const label = await generateDefaultLabel(sourcePane, targetPane);
-    expect(label).toBe('testA to testB');
-  });
-
-  it('generates the expected label from query datasources when mixed', async () => {
-    const queriesA: DataQuery[] = [{ refId: 'A', datasource: { uid: 'testQueryA' } }];
-    const queriesB: DataQuery[] = [{ refId: 'B', datasource: { uid: 'testQueryB' } }];
-    const sourcePane: ExploreItemState = {
-      datasourceInstance: { name: 'testA', meta: { mixed: true } },
-      queries: queriesA,
-      queryKeys: [],
-    } as unknown as ExploreItemState;
-    const targetPane: ExploreItemState = {
-      datasourceInstance: { name: 'testB', meta: { mixed: false } },
-      queries: queriesB,
-      queryKeys: [],
-    } as unknown as ExploreItemState;
-    const label = await generateDefaultLabel(sourcePane, targetPane);
-    expect(label).toBe('getTest to testB');
-  });
-
-  it('does not add target data when the correlation is external', async () => {
-    const addForm = {
-      config: { field: 'test', target: { url: 'test' } },
-      sourceUID: 'test',
-      label: 'test',
-      description: 'test',
-      targetUID: undefined,
-      type: 'external',
-    };
-    // this mimics the real scenario this form gets in, even though it is technically invalid (external types shouldn't have the targetUID property)
-    const addSpec = await utils.generateAddSpec(addForm as FormDTO);
-    expect(addSpec.target).not.toBeDefined();
-  });
   describe('getCorrelationsFromStorage', () => {
     const originalFeatureToggles = config.featureToggles;
 
     const listCorrelationK8sMock = jest.spyOn(correlationsAPIv0alpha1.endpoints.listCorrelation, 'initiate');
-    const getCorrelationsLegacyMock = jest
-      .spyOn(utils, 'getCorrelationsBySourceUIDs')
-      .mockResolvedValue({ correlations: [], page: 0, limit: 100, totalCount: 0 });
+    const getCorrelationsLegacyMock = jest.mocked(getCorrelationsBySourceUIDs);
 
     afterEach(() => {
       config.featureToggles = originalFeatureToggles;
@@ -258,7 +150,7 @@ describe('correlations utils', () => {
       const dispatch = jest.fn(() => subscription);
       config.featureToggles = { ...originalFeatureToggles, kubernetesCorrelations: true };
 
-      await utils.getCorrelationsFromStorage(dispatch, [], 'test');
+      await getCorrelationsFromStorage(dispatch, [], 'test');
       expect(listCorrelationK8sMock).toHaveBeenCalled();
       expect(getCorrelationsLegacyMock).not.toHaveBeenCalled();
     });
@@ -269,7 +161,8 @@ describe('correlations utils', () => {
       const dispatch = jest.fn(() => subscription);
       config.featureToggles = { ...originalFeatureToggles, kubernetesCorrelations: false };
 
-      await utils.getCorrelationsFromStorage(dispatch, [], 'test');
+      getCorrelationsLegacyMock.mockResolvedValue({ correlations: [], page: 0, limit: 100, totalCount: 0 });
+      await getCorrelationsFromStorage(dispatch, [], 'test');
       expect(listCorrelationK8sMock).not.toHaveBeenCalled();
       expect(getCorrelationsLegacyMock).toHaveBeenCalled();
     });
@@ -279,7 +172,7 @@ describe('correlations utils', () => {
       const subscription = { unsubscribe };
       const dispatch = jest.fn(() => subscription);
       config.featureToggles = { ...originalFeatureToggles, kubernetesCorrelations: true };
-      await utils.getCorrelationsFromStorage(
+      await getCorrelationsFromStorage(
         dispatch,
         [{ refId: 'test', datasource: { uid: 'testUid', type: 'testType' } }],
         MIXED_DATASOURCE_NAME
@@ -294,7 +187,7 @@ describe('correlations utils', () => {
       const subscription = { unsubscribe };
       const dispatch = jest.fn(() => subscription);
       config.featureToggles = { ...originalFeatureToggles, kubernetesCorrelations: true };
-      await utils.getCorrelationsFromStorage(
+      await getCorrelationsFromStorage(
         dispatch,
         [{ refId: 'test', datasource: { uid: 'testUIdNoShow', type: 'testTypeNoShow' } }],
         'testUid'

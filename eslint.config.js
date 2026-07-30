@@ -353,6 +353,27 @@ module.exports = [
   },
 
   {
+    // @grafana/migrate-to-cloud is a private package consumed only by the app through the
+    // @grafana-app/source condition, so it may keep using @grafana/*/internal exports.
+    name: 'grafana/migrate-to-cloud-package-overrides',
+    files: ['packages/grafana-migrate-to-cloud/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': ['error', withBaseRestrictedImportsConfig()],
+    },
+  },
+
+  {
+    // @grafana/teams is a private workspace package consumed from source by the app
+    // (never published to NPM), so it may use 'internal' exports.
+    name: 'grafana/teams-package-overrides',
+    files: ['packages/grafana-teams/**/*.{ts,tsx}'],
+    ignores: [],
+    rules: {
+      'no-restricted-imports': ['error', baseImportConfig],
+    },
+  },
+
+  {
     // @grafana/runtime shouldn't be imported from our 'library' NPM packages
     name: 'grafana/packages-that-cant-import-runtime',
     files: [
@@ -434,6 +455,14 @@ module.exports = [
       'packages/grafana-ui/**/*.{ts,tsx,js,jsx}',
       'packages/grafana-data/**/*.{ts,tsx,js,jsx}',
       'packages/grafana-sql/**/*.{ts,tsx,js,jsx}',
+      'packages/grafana-auth-config/**/*.{ts,tsx,js,jsx}',
+      'packages/grafana-bookmarks/**/*.{ts,tsx,js,jsx}',
+      'packages/grafana-command-palette/**/*.{ts,tsx,js,jsx}',
+      'packages/grafana-correlations/**/*.{ts,tsx,js,jsx}',
+      'packages/grafana-migrate-to-cloud/**/*.{ts,tsx,js,jsx}',
+      'packages/grafana-serviceaccounts/**/*.{ts,tsx,js,jsx}',
+      'packages/grafana-support-bundles/**/*.{ts,tsx,js,jsx}',
+      'packages/grafana-teams/**/*.{ts,tsx,js,jsx}',
       ...pluginsToTranslate.map((plugin) => `${plugin}/**/*.{ts,tsx,js,jsx}`),
     ],
     ignores: [
@@ -441,6 +470,7 @@ module.exports = [
       '**/*.{test,spec,story}.{ts,tsx}',
       '**/{tests,__mocks__,__tests__,fixtures,spec,mocks}/**',
       '**/{test-utils,testHelpers,mocks}.{ts,tsx}',
+      'packages/*/src/testUtils.{ts,tsx}',
       '**/mock*.{ts,tsx}',
     ],
     rules: {

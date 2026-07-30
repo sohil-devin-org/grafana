@@ -3,11 +3,11 @@ import { useEffect, useState } from 'react';
 
 import { t, Trans } from '@grafana/i18n';
 import { isFetchError } from '@grafana/runtime';
+import { useLazyGetTeamByUidQuery, useLazySearchTeamsQuery } from '@grafana/teams';
 import { Alert, Box, Combobox, type ComboboxOption, Label } from '@grafana/ui';
 import { type OwnerReference } from 'app/api/clients/folder/v1beta1';
 import { API_GROUP as IAM_API_GROUP, API_VERSION as IAM_API_VERSION } from 'app/api/clients/iam/v0alpha1';
 import { extractErrorMessage } from 'app/api/utils';
-import { useLazyGetTeamByUidQuery, useLazySearchTeamsQuery } from 'app/features/teams/hooks';
 
 const OWNER_REFERENCE_API_VERSION = `${IAM_API_GROUP}/${IAM_API_VERSION}` as const;
 const OWNER_REFERENCE_KIND = 'Team' as const;

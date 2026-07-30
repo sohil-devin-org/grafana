@@ -3,16 +3,15 @@ import { useId, useState, useMemo, useEffect } from 'react';
 import Highlighter from 'react-highlight-words';
 import { useForm, Controller } from 'react-hook-form';
 
+import {
+  getSupportedTransTypeDetails,
+  getTransformationVars,
+  getTransformOptions,
+  type TransformationFieldDetails,
+} from '@grafana/correlations';
 import { type DataLinkTransformationConfig, type ScopedVars } from '@grafana/data';
 import { Trans, t } from '@grafana/i18n';
 import { Button, Field, Icon, Input, Label, Modal, Select, Tooltip, Stack } from '@grafana/ui';
-
-import {
-  getSupportedTransTypeDetails,
-  getTransformOptions,
-  type TransformationFieldDetails,
-} from '../correlations/Forms/types';
-import { getTransformationVars } from '../correlations/transformations';
 
 interface CorrelationTransformationAddModalProps {
   onCancel: () => void;

@@ -1,14 +1,12 @@
 import { Observable } from 'rxjs';
 
+import { type CommandPaletteAction, SECTION_RECENT_SCOPES, RECENT_SCOPES_PRIORITY } from '@grafana/command-palette';
 import { useObservable } from '@grafana/data/unstable';
 import { t } from '@grafana/i18n';
 import { config } from '@grafana/runtime';
 import { useScopesServices } from 'app/features/scopes/ScopesContextProvider';
 import { type ScopesSelectorServiceState } from 'app/features/scopes/selector/ScopesSelectorService';
 import { useRecentScopes } from 'app/features/scopes/selector/useRecentScopes';
-
-import { type CommandPaletteAction } from '../types';
-import { SECTION_RECENT_SCOPES, RECENT_SCOPES_PRIORITY } from '../values';
 
 const EMPTY_OBSERVABLE = new Observable<ScopesSelectorServiceState>();
 

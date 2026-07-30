@@ -12,6 +12,7 @@ import { useScopeServicesState } from './scopesUtils';
 
 // Mock dependencies
 jest.mock('kbar', () => ({
+  ...jest.requireActual('kbar'),
   useRegisterActions: jest.fn(),
 }));
 

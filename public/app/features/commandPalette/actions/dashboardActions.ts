@@ -1,21 +1,20 @@
 import debounce from 'debounce-promise';
 import { useEffect, useRef, useState } from 'react';
 
+import {
+  type CommandPaletteAction,
+  SECTION_DASHBOARDS,
+  SECTION_FOLDERS,
+  SECTION_RECENT_DASHBOARDS,
+  RECENT_DASHBOARDS_PRIORITY,
+  SEARCH_RESULTS_PRIORITY,
+} from '@grafana/command-palette';
 import { t } from '@grafana/i18n';
 import { config } from '@grafana/runtime';
 import { contextSrv } from 'app/core/services/context_srv';
 import { getRecentlyViewedDashboards } from 'app/features/browse-dashboards/api/recentlyViewed';
 import { getGrafanaSearcher } from 'app/features/search/service/searcher';
 import { extractManagerKind } from 'app/features/search/service/utils';
-
-import { type CommandPaletteAction } from '../types';
-import {
-  SECTION_DASHBOARDS,
-  SECTION_FOLDERS,
-  SECTION_RECENT_DASHBOARDS,
-  RECENT_DASHBOARDS_PRIORITY,
-  SEARCH_RESULTS_PRIORITY,
-} from '../values';
 
 const MAX_SEARCH_RESULTS = 100;
 const MAX_RECENT_DASHBOARDS = 5;

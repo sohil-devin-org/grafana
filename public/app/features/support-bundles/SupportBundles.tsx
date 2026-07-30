@@ -1,21 +1,12 @@
 import { useEffect } from 'react';
 import { connect, type ConnectedProps } from 'react-redux';
 
-import { dateTimeFormat } from '@grafana/data';
-import { Trans, t } from '@grafana/i18n';
-import { Alert, LinkButton, Spinner, IconButton } from '@grafana/ui';
+import { Trans } from '@grafana/i18n';
+import { loadBundles, removeBundle, checkBundles, NewBundleButton, SupportBundlesList } from '@grafana/support-bundles';
 import { Page } from 'app/core/components/Page/Page';
 import { contextSrv } from 'app/core/services/context_srv';
 import { AccessControlAction } from 'app/types/accessControl';
 import { type StoreState } from 'app/types/store';
-
-import { loadBundles, removeBundle, checkBundles } from './state/actions';
-
-const NewBundleButton = (
-  <LinkButton icon="plus" href="support-bundles/create" variant="primary">
-    <Trans i18nKey="support-bundles.new-bundle-button.new-support-bundle">New support bundle</Trans>
-  </LinkButton>
-);
 
 const mapStateToProps = (state: StoreState) => {
   return {
@@ -64,63 +55,7 @@ const SupportBundlesUnconnected = ({ supportBundles, isLoading, loadBundles, rem
   return (
     <Page navId="support-bundles" subTitle={subTitle} actions={actions}>
       <Page.Contents isLoading={isLoading}>
-        <Alert
-          title={t('support-bundles.support-bundles-unconnected.deprecation-warning-title', 'Deprecated feature')}
-          severity="warning"
-        >
-          <Trans i18nKey="support-bundles.support-bundles-unconnected.deprecation-warning-message">
-            Support bundles are deprecated and will be removed soon. For troubleshooting, collect the relevant server
-            logs, configuration, and diagnostic details manually, then attach them to your Grafana Support ticket.
-          </Trans>
-        </Alert>
-        <table className="filter-table form-inline">
-          <thead>
-            <tr>
-              <th>
-                <Trans i18nKey="support-bundles.support-bundles-unconnected.created-on">Created on</Trans>
-              </th>
-              <th>
-                <Trans i18nKey="support-bundles.support-bundles-unconnected.requested-by">Requested by</Trans>
-              </th>
-              <th>
-                <Trans i18nKey="support-bundles.support-bundles-unconnected.expires">Expires</Trans>
-              </th>
-              <th style={{ width: '32px' }} />
-              <th style={{ width: '1%' }} />
-              <th style={{ width: '1%' }} />
-            </tr>
-          </thead>
-          <tbody>
-            {supportBundles?.map((bundle) => (
-              <tr key={bundle.uid}>
-                <th>{dateTimeFormat(bundle.createdAt * 1000)}</th>
-                <th>{bundle.creator}</th>
-                <th>{dateTimeFormat(bundle.expiresAt * 1000)}</th>
-                <th>{bundle.state === 'pending' && <Spinner />}</th>
-                <th>
-                  <LinkButton
-                    fill="outline"
-                    disabled={bundle.state !== 'complete'}
-                    target={'_self'}
-                    href={`/api/support-bundles/${bundle.uid}`}
-                  >
-                    <Trans i18nKey="support-bundles.support-bundles-unconnected.download">Download</Trans>
-                  </LinkButton>
-                </th>
-                <th>
-                  {hasDeleteAccess && (
-                    <IconButton
-                      onClick={() => removeBundle(bundle.uid)}
-                      name="trash-alt"
-                      variant="destructive"
-                      tooltip={t('support-bundles.support-bundles-unconnected.tooltip-remove-bundle', 'Remove bundle')}
-                    />
-                  )}
-                </th>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <SupportBundlesList supportBundles={supportBundles} hasDeleteAccess={hasDeleteAccess} onRemove={removeBundle} />
       </Page.Contents>
     </Page>
   );

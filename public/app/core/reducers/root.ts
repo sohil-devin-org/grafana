@@ -6,11 +6,15 @@ import { generatedAPI as migrateToCloudAPI } from '@grafana/api-clients/internal
 import { generatedAPI as preferencesUserAPI } from '@grafana/api-clients/internal/rtkq/legacy/preferences/user';
 import { generatedAPI as legacyUserAPI } from '@grafana/api-clients/internal/rtkq/legacy/user';
 import { allReducers as allApiClientReducers } from '@grafana/api-clients/rtkq';
+import { authConfigReducers } from '@grafana/auth-config';
+import { serviceAccountsReducers as serviceAccountsReducer } from '@grafana/serviceaccounts';
+import { supportBundlesReducers as supportBundlesReducer } from '@grafana/support-bundles';
 import { scopeAPIv0alpha1 } from 'app/api/clients/scope/v0alpha1';
 import sharedReducers from 'app/core/reducers';
 import ldapReducers from 'app/features/admin/state/reducers';
 import alertingReducers from 'app/features/alerting/state/reducers';
-import authConfigReducers from 'app/features/auth-config/state/reducers';
+// Side-effect import: registers app services with the extracted auth-config package at boot.
+import 'app/features/auth-config';
 import { browseDashboardsAPI } from 'app/features/browse-dashboards/api/browseDashboardsAPI';
 import browseDashboardsReducers from 'app/features/browse-dashboards/state/slice';
 import { publicDashboardApi } from 'app/features/dashboard/api/publicDashboardApi';
@@ -23,8 +27,6 @@ import organizationReducers from 'app/features/org/state/reducers';
 import panelsReducers from 'app/features/panel/state/reducers';
 import { reducer as pluginsReducer } from 'app/features/plugins/admin/state/reducer';
 import userReducers from 'app/features/profile/state/reducers';
-import serviceAccountsReducer from 'app/features/serviceaccounts/state/reducers';
-import supportBundlesReducer from 'app/features/support-bundles/state/reducers';
 import usersReducers from 'app/features/users/state/reducers';
 import templatingReducers from 'app/features/variables/state/keyedVariablesReducer';
 

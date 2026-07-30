@@ -5,6 +5,7 @@ import { Resizable } from 're-resizable';
 import { type PropsWithChildren, useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { CommandPalette } from '@grafana/command-palette';
 import { type GrafanaTheme2, store } from '@grafana/data';
 import { Trans } from '@grafana/i18n';
 import { locationSearchToObject, locationService, useScopes } from '@grafana/runtime';
@@ -13,7 +14,7 @@ import { ErrorBoundaryAlert, floatingUtils, getDragStyles, LinkButton, useStyles
 import { SplashScreenModal } from 'app/core/components/SplashScreenModal/SplashScreenModal';
 import { useGrafana } from 'app/core/context/GrafanaContext';
 import { useMediaQueryMinWidth } from 'app/core/hooks/useMediaQueryMinWidth';
-import { CommandPalette } from 'app/features/commandPalette/CommandPalette';
+import { commandPaletteExtensions } from 'app/features/commandPalette/extensions';
 import { ScopesDashboards } from 'app/features/scopes/dashboards/ScopesDashboards';
 
 import { AppChromeMenu } from './AppChromeMenu';
@@ -221,7 +222,7 @@ export function AppChrome({ children }: Props) {
         </div>
       </div>
       {!state.chromeless && !state.megaMenuDocked && <AppChromeMenu />}
-      {!state.chromeless && <CommandPalette />}
+      {!state.chromeless && <CommandPalette extensions={commandPaletteExtensions} />}
       {!state.chromeless && isSplashScreenEnabled && <SplashScreenModal />}
       {!state.chromeless && <FeatureControlFloating />}
       {shouldShowReturnToPrevious && state.returnToPrevious && (

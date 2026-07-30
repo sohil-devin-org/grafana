@@ -1,3 +1,4 @@
+import { getVariableUsageInfo } from '@grafana/correlations';
 import {
   type DataFrame,
   type DataLink,
@@ -27,7 +28,7 @@ import { Icon } from '@grafana/ui';
 import { getDatasourceSrv } from 'app/features/plugins/datasource_srv';
 
 import { type LokiQuery } from '../../loki-helpers/types';
-import { type ExploreFieldLinkModel, getFieldLinksForExplore, getVariableUsageInfo } from '../utils/links';
+import { type ExploreFieldLinkModel, getFieldLinksForExplore } from '../utils/links';
 
 import { type SpanLinkDef, type SpanLinkFunc, SpanLinkType } from './components/types/links';
 import { type Trace, type TraceSpan, type TraceSpanReference } from './components/types/trace';
