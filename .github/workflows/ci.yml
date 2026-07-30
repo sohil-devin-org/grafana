@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  frontend-lint:
+    name: Frontend lint & typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+      - run: corepack enable
+      - uses: actions/cache@v4
+        with:
+          path: .yarn/cache
+          key: yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: yarn-
+      - run: yarn install --immutable
+      - run: yarn lint:ts
+      - run: yarn typecheck
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
+
+  frontend-unit-tests:
+    name: Frontend unit tests (shard ${{ matrix.shard }}/8)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6, 7, 8]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+      - run: corepack enable
+      - uses: actions/cache@v4
+        with:
+          path: .yarn/cache
+          key: yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: yarn-
+      - run: yarn install --immutable
+      - run: yarn run test:ci
+        env:
+          TEST_SHARD: ${{ matrix.shard }}
+          TEST_SHARD_TOTAL: 8
+          TEST_MAX_WORKERS: 100%
+
+  backend:
+    name: Backend build & unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - run: make build-go
+      - run: go test -short ./pkg/util/... ./pkg/infra/... ./pkg/models/... ./pkg/components/...
