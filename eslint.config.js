@@ -363,6 +363,17 @@ module.exports = [
   },
 
   {
+    // @grafana/teams is a private workspace package consumed from source by the app
+    // (never published to NPM), so it may use 'internal' exports.
+    name: 'grafana/teams-package-overrides',
+    files: ['packages/grafana-teams/**/*.{ts,tsx}'],
+    ignores: [],
+    rules: {
+      'no-restricted-imports': ['error', baseImportConfig],
+    },
+  },
+
+  {
     // @grafana/runtime shouldn't be imported from our 'library' NPM packages
     name: 'grafana/packages-that-cant-import-runtime',
     files: [

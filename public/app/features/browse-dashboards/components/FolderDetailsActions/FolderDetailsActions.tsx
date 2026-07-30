@@ -5,6 +5,7 @@ import { type OwnerReference as OwnerReferenceType } from '@grafana/api-clients/
 import { type GrafanaTheme2 } from '@grafana/data';
 import { Trans } from '@grafana/i18n';
 import { config, reportInteraction } from '@grafana/runtime';
+import { useGetTeamByUidQuery } from '@grafana/teams';
 import { LinkButton, Stack, Text, useStyles2 } from '@grafana/ui';
 import { type CombinedFolder, useGetFolderQueryFacade } from 'app/api/clients/folder/v1beta1/hooks';
 import { OwnerReference } from 'app/core/components/OwnerReferences/OwnerReference';
@@ -12,7 +13,6 @@ import { contextSrv } from 'app/core/services/context_srv';
 import { useGetResourceRepositoryView } from 'app/features/provisioning/hooks/useGetResourceRepositoryView';
 import { STARRED_FOLDERS_UID } from 'app/features/search/constants';
 import { StarToolbarButton } from 'app/features/stars/StarToolbarButton';
-import { useGetTeamByUidQuery } from 'app/features/teams/hooks';
 import { AccessControlAction } from 'app/types/accessControl';
 import { useDispatch } from 'app/types/store';
 

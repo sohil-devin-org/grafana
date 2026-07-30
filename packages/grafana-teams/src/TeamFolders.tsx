@@ -3,15 +3,17 @@ import memoizeOne from 'memoize-one';
 import { Fragment } from 'react';
 import Skeleton from 'react-loading-skeleton';
 
-import { type DashboardHit } from '@grafana/api-clients/rtkq/dashboard/v0alpha1';
+import { type DashboardHit, useSearchDashboardsAndFoldersQuery } from '@grafana/api-clients/rtkq/dashboard/v0alpha1';
+import { useGetFolderParentsQuery } from '@grafana/api-clients/rtkq/folder/v1beta1';
 import { t } from '@grafana/i18n';
 import { reportInteraction } from '@grafana/runtime';
 import { Alert, type Column, EmptyState, InteractiveTable, TextLink } from '@grafana/ui';
-import { useSearchDashboardsAndFoldersQuery } from 'app/api/clients/dashboard/v0alpha1';
-import { useGetFolderParentsQuery } from 'app/api/clients/folder/v1beta1';
-import { GENERAL_FOLDER_TITLE, GENERAL_FOLDER_UID } from 'app/features/search/constants';
 
-import { extractErrorMessage } from '../../api/utils';
+import { getTeamsDependencies } from './dependencies';
+
+// Same values as the app's GENERAL_FOLDER_UID / GENERAL_FOLDER_TITLE search constants
+const GENERAL_FOLDER_UID = 'general';
+const GENERAL_FOLDER_TITLE = 'Dashboards';
 
 // We need getColumns and getSkeletonData to be functions because they use t() which cannot be called in global context.
 const getColumns = memoizeOne((): Array<Column<DashboardHit>> => {
@@ -65,7 +67,7 @@ export function TeamFolders({ teamUid }: { teamUid: string }) {
         severity="error"
         title={t('teams.team-pages.team-folders.error-loading-folders', 'Could not load team folders')}
       >
-        {extractErrorMessage(error)}
+        {getTeamsDependencies().extractErrorMessage(error)}
       </Alert>
     );
   }

@@ -3,21 +3,18 @@ import { useForm } from 'react-hook-form';
 import { Trans, t } from '@grafana/i18n';
 import { useFlagGrafanaNewPreferencesPage } from '@grafana/runtime/internal';
 import { Button, Field, FieldSet, Input, Stack } from '@grafana/ui';
-import { TeamRolePicker } from 'app/core/components/RolePicker/TeamRolePicker';
-import { useRoleOptions } from 'app/core/components/RolePicker/hooks';
-import { SharedPreferences } from 'app/core/components/SharedPreferences/SharedPreferences';
-import { contextSrv } from 'app/core/services/context_srv';
-import { AccessControlAction } from 'app/types/accessControl';
-import { type Team } from 'app/types/teams';
 
+import { getTeamsDependencies, TeamsAction } from './dependencies';
 import { useUpdateTeam } from './hooks';
+import { type Team } from './types';
 
 interface Props {
   team: Team;
 }
 
 const TeamSettings = ({ team }: Props) => {
-  const canWriteTeamSettings = contextSrv.hasPermissionInMetadata(AccessControlAction.ActionTeamsWrite, team);
+  const { contextSrv, SharedPreferences, TeamRolePicker, useRoleOptions } = getTeamsDependencies();
+  const canWriteTeamSettings = contextSrv.hasPermissionInMetadata(TeamsAction.ActionTeamsWrite, team);
   const currentOrgId = contextSrv.user.orgId;
   const [updateTeam] = useUpdateTeam();
 
@@ -29,12 +26,12 @@ const TeamSettings = ({ team }: Props) => {
   } = useForm<Team>({ defaultValues: team });
 
   const canUpdateRoles =
-    contextSrv.hasPermission(AccessControlAction.ActionTeamsRolesAdd) &&
-    contextSrv.hasPermission(AccessControlAction.ActionTeamsRolesRemove);
+    contextSrv.hasPermission(TeamsAction.ActionTeamsRolesAdd) &&
+    contextSrv.hasPermission(TeamsAction.ActionTeamsRolesRemove);
 
   const canListRoles =
-    contextSrv.hasPermissionInMetadata(AccessControlAction.ActionTeamsRolesList, team) &&
-    contextSrv.hasPermission(AccessControlAction.ActionRolesList);
+    contextSrv.hasPermissionInMetadata(TeamsAction.ActionTeamsRolesList, team) &&
+    contextSrv.hasPermission(TeamsAction.ActionRolesList);
 
   const onSubmit = async (formTeam: Team) => {
     return updateTeam({

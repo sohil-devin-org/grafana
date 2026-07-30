@@ -1,23 +1,21 @@
 import { type NavModelItem, type NavModel } from '@grafana/data';
 import { t } from '@grafana/i18n';
-import { featureEnabled } from '@grafana/runtime';
-import { ProBadge } from 'app/core/components/Upgrade/ProBadge';
-import config from 'app/core/config';
-import { contextSrv } from 'app/core/services/context_srv';
-import { highlightTrial } from 'app/features/admin/utils';
-import { AccessControlAction } from 'app/types/accessControl';
-import { TeamPermissionLevel } from 'app/types/acl';
-import { type Team } from 'app/types/teams';
-import userProfilePng from 'img/user_profile.png';
+import { config, featureEnabled } from '@grafana/runtime';
+
+import { getTeamsDependencies, TeamsAction } from '../dependencies';
+import { type Team } from '../types';
+
+// Same value as the app's TeamPermissionLevel.Member
+const TEAM_PERMISSION_LEVEL_MEMBER = 0;
 
 const loadingTeam = {
-  avatarUrl: userProfilePng,
+  avatarUrl: '',
   id: 1,
   uid: '',
   name: 'Loading',
   email: 'loading',
   memberCount: 0,
-  permission: TeamPermissionLevel.Member,
+  permission: TEAM_PERMISSION_LEVEL_MEMBER,
   accessControl: { isEditor: false },
   orgId: 0,
   updated: '',
@@ -25,11 +23,12 @@ const loadingTeam = {
 };
 
 export function buildNavModel(team: Team): NavModelItem {
+  const { contextSrv, highlightTrial, proBadge, userProfilePngUrl } = getTeamsDependencies();
   // Means team is not loaded yet and we have just a placeholder team object
   const isLoadingTeam = team === loadingTeam;
 
   const navModel: NavModelItem = {
-    img: team.avatarUrl,
+    img: isLoadingTeam ? userProfilePngUrl : team.avatarUrl,
     id: 'team-' + team.uid,
     subTitle: t('teams.build-nav-model.nav-model.subTitle.manage-members-and-settings', 'Manage members and settings'),
     url: `org/teams/edit/${team.uid}`,
@@ -50,7 +49,7 @@ export function buildNavModel(team: Team): NavModelItem {
   // While team is loading we leave the members tab
   // With RBAC the Members tab is available when user has ActionTeamsPermissionsRead for this team
   // With Legacy it will always be present
-  if (isLoadingTeam || contextSrv.hasPermissionInMetadata(AccessControlAction.ActionTeamsPermissionsRead, team)) {
+  if (isLoadingTeam || contextSrv.hasPermissionInMetadata(TeamsAction.ActionTeamsPermissionsRead, team)) {
     navModel.children!.unshift({
       active: false,
       icon: 'users-alt',
@@ -70,20 +69,20 @@ export function buildNavModel(team: Team): NavModelItem {
 
   if (highlightTrial()) {
     teamGroupSync.tabSuffix = () =>
-      ProBadge({ experimentId: isLoadingTeam ? '' : 'feature-highlights-team-sync-badge', eventVariant: 'trial' });
+      proBadge({ experimentId: isLoadingTeam ? '' : 'feature-highlights-team-sync-badge', eventVariant: 'trial' });
   }
 
   // With both Legacy and RBAC the tab is protected being featureEnabled
   // While team is loading we leave the teamsync tab
   // With RBAC the External Group Sync tab is available when user has ActionTeamsPermissionsRead for this team
   if (featureEnabled('teamsync')) {
-    if (isLoadingTeam || contextSrv.hasPermissionInMetadata(AccessControlAction.ActionTeamsPermissionsRead, team)) {
+    if (isLoadingTeam || contextSrv.hasPermissionInMetadata(TeamsAction.ActionTeamsPermissionsRead, team)) {
       navModel.children!.push(teamGroupSync);
     }
   } else if (config.featureToggles.featureHighlights) {
     navModel.children!.push({
       ...teamGroupSync,
-      tabSuffix: () => ProBadge({ experimentId: isLoadingTeam ? '' : 'feature-highlights-team-sync-badge' }),
+      tabSuffix: () => proBadge({ experimentId: isLoadingTeam ? '' : 'feature-highlights-team-sync-badge' }),
     });
   }
 
@@ -91,7 +90,7 @@ export function buildNavModel(team: Team): NavModelItem {
   if (
     // If team is loading we won't show this which is probably fine so we don't end up with bad urls.
     !isLoadingTeam &&
-    contextSrv.hasPermissionInMetadata(AccessControlAction.ActionTeamsRead, team)
+    contextSrv.hasPermissionInMetadata(TeamsAction.ActionTeamsRead, team)
   ) {
     // Add it after settings tab
     // TODO: this array construction could probably be simplified so we don't have to do random splicing and unshifts

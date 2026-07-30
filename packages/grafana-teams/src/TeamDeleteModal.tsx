@@ -2,7 +2,8 @@ import { useState } from 'react';
 
 import { t, Trans } from '@grafana/i18n';
 import { Alert, ConfirmModal, Space, Text } from '@grafana/ui';
-import { getMessageFromError } from 'app/core/utils/errors';
+
+import { getTeamsDependencies } from './dependencies';
 
 export interface Props {
   isOpen: boolean;
@@ -23,7 +24,7 @@ export const TeamDeleteModal = ({ isOpen, onConfirm, onDismiss, teamName, ownedF
       onDismiss();
     } catch (error) {
       setDeleteError(
-        getMessageFromError(error) ||
+        getTeamsDependencies().getMessageFromError(error) ||
           t('teams.team-list.columns.delete-modal-error-text', 'Failed to delete team. Please try again.')
       );
     }

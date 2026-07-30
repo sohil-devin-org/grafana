@@ -1,16 +1,6 @@
 import { skipToken } from '@reduxjs/toolkit/query';
 import { useCallback, useEffect, useMemo } from 'react';
 
-import { config } from '@grafana/runtime';
-import {
-  API_GROUP,
-  API_VERSION,
-  type GetTeamApiArg,
-  type Team,
-  useLazyGetSearchTeamsQuery as useLazyGetSearchTeamsQueryIam,
-  useLazyGetTeamQuery as useLazyGetTeamQueryIam,
-  useGetTeamQuery as useGetTeamQueryIam,
-} from 'app/api/clients/iam/v0alpha1';
 import {
   type TeamDto,
   type UpdateTeamCommand,
@@ -21,21 +11,33 @@ import {
   useSearchTeamsQuery as useLegacySearchTeamsQuery,
   useListTeamsRolesQuery,
   useUpdateTeamMutation,
-} from 'app/api/clients/legacy';
-import { updateNavIndex } from 'app/core/reducers/navModel';
-import { contextSrv } from 'app/core/services/context_srv';
-import { addFilteredDisplayName } from 'app/core/utils/roles';
-import { AccessControlAction } from 'app/types/accessControl';
-import { useDispatch } from 'app/types/store';
+} from '@grafana/api-clients/internal/rtkq/legacy';
+import {
+  API_GROUP,
+  API_VERSION,
+  type GetTeamApiArg,
+  type Team,
+  useLazyGetSearchTeamsQuery as useLazyGetSearchTeamsQueryIam,
+  useLazyGetTeamQuery as useLazyGetTeamQueryIam,
+  useGetTeamQuery as useGetTeamQueryIam,
+} from '@grafana/api-clients/rtkq/iam/v0alpha1';
+import { config } from '@grafana/runtime';
 
+import { getTeamsDependencies, TeamsAction } from './dependencies';
 import { buildNavModel } from './state/navModel';
 
-const rolesEnabled =
-  contextSrv.licensedAccessControlEnabled() && contextSrv.hasPermission(AccessControlAction.ActionTeamsRolesList);
+const areRolesEnabled = () => {
+  const { contextSrv } = getTeamsDependencies();
+  return contextSrv.licensedAccessControlEnabled() && contextSrv.hasPermission(TeamsAction.ActionTeamsRolesList);
+};
 
-export const canUpdateRoles = () =>
-  contextSrv.hasPermission(AccessControlAction.ActionUserRolesAdd) &&
-  contextSrv.hasPermission(AccessControlAction.ActionUserRolesRemove);
+export const canUpdateRoles = () => {
+  const { contextSrv } = getTeamsDependencies();
+  return (
+    contextSrv.hasPermission(TeamsAction.ActionUserRolesAdd) &&
+    contextSrv.hasPermission(TeamsAction.ActionUserRolesRemove)
+  );
+};
 
 /**
  * Get list of teams and their associated roles (if roles are enabled)
@@ -51,6 +53,7 @@ export const useGetTeams = ({
   page?: number;
   sort?: string;
 }) => {
+  const rolesEnabled = areRolesEnabled();
   const legacyResponse = useLegacySearchTeamsQuery({ perpage: pageSize, accesscontrol: true, page, sort, query });
 
   const teamIds = useMemo(() => {
@@ -69,13 +72,13 @@ export const useGetTeams = ({
     }
     return (legacyResponse.data?.teams || []).map((team) => {
       const roles = team.id ? teamsRolesResponse.data?.[team.id] || [] : [];
-      const mappedRoles = roles.map((role) => addFilteredDisplayName(role));
+      const mappedRoles = roles.map((role) => getTeamsDependencies().addFilteredDisplayName(role));
       return {
         ...team,
         roles: mappedRoles,
       };
     });
-  }, [legacyResponse, teamsRolesResponse]);
+  }, [legacyResponse, teamsRolesResponse, rolesEnabled]);
 
   return {
     ...legacyResponse,
@@ -92,14 +95,15 @@ export const useGetTeams = ({
  */
 export const useGetTeam = ({ uid }: { uid: string }) => {
   const response = useGetTeamByIdQuery({ teamId: uid, accesscontrol: true });
-  const dispatch = useDispatch();
+  const { useUpdateNavIndex } = getTeamsDependencies();
+  const updateNavIndex = useUpdateNavIndex();
 
   // TODO: Eventually remove and handle nav index logic elsewhere
   useEffect(() => {
     if (response.data) {
-      dispatch(updateNavIndex(buildNavModel(response.data)));
+      updateNavIndex(buildNavModel(response.data));
     }
-  }, [response.data, dispatch]);
+  }, [response.data, updateNavIndex]);
 
   return response;
 };

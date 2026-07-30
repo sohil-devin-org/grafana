@@ -9,11 +9,8 @@ import {
 } from '@grafana/api-clients/internal/rtkq/legacy';
 import { Trans, t } from '@grafana/i18n';
 import { Input, Tooltip, Icon, Button, useTheme2, InlineField, InlineFieldRow, useStyles2 } from '@grafana/ui';
-import { SlideDown } from 'app/core/components/Animations/SlideDown';
-import { CloseButton } from 'app/core/components/CloseButton/CloseButton';
-import EmptyListCTA from 'app/core/components/EmptyListCTA/EmptyListCTA';
-import { UpgradeBox, UpgradeContent, type UpgradeContentProps } from 'app/core/components/Upgrade/UpgradeBox';
-import { highlightTrial } from 'app/features/admin/utils';
+
+import { getTeamsDependencies, type UpgradeContentProps } from './dependencies';
 
 interface Props {
   isReadOnly: boolean;
@@ -23,6 +20,7 @@ interface Props {
 const headerTooltip = `Sync LDAP, OAuth or SAML groups with your Grafana teams.`;
 
 const TeamGroupSync = ({ isReadOnly, teamUid }: Props) => {
+  const { SlideDown, CloseButton, EmptyListCTA, UpgradeBox, highlightTrial } = getTeamsDependencies();
   const [isAddBoxVisible, setIsAddBoxVisible] = useState(false);
   const [newGroupId, setNewGroupId] = useState('');
   const styles = useStyles2(getStyles);
@@ -178,6 +176,7 @@ const TeamGroupSync = ({ isReadOnly, teamUid }: Props) => {
 };
 
 export const TeamSyncUpgradeContent = ({ action }: { action?: UpgradeContentProps['action'] }) => {
+  const { UpgradeContent } = getTeamsDependencies();
   const theme = useTheme2();
   return (
     <UpgradeContent

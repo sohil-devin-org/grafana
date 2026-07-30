@@ -35,6 +35,7 @@
     "public/test/**/*.ts*",
     "public/vendor/**/*.ts",
     "packages/grafana-data/typings",
+    "packages/grafana-teams/src/**/*.ts*",
     "packages/grafana-ui/src/types",
     "public/boot/**/*.ts*"
   ],

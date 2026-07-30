@@ -1,3 +1,5 @@
+import 'app/features/teams';
+
 import { http, HttpResponse } from 'msw';
 import { screen, render, waitFor } from 'test/test-utils';
 

@@ -1,6 +1,6 @@
 import { randomBytes } from 'crypto';
 
-import { type Team } from 'app/types/teams';
+import { type Team } from '@grafana/teams';
 
 function generateShortUid(): string {
   return randomBytes(3).toString('hex'); // Generate a short UID

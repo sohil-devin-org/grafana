@@ -7,12 +7,8 @@ import { Trans, t } from '@grafana/i18n';
 import { reportInteraction } from '@grafana/runtime';
 import { Button, Checkbox, Field, FieldSet, Input, Stack, useStyles2 } from '@grafana/ui';
 
-import { Page } from '../../../core/components/Page/Page';
-import { TeamRolePicker } from '../../../core/components/RolePicker/TeamRolePicker';
-import { useRoleOptions } from '../../../core/components/RolePicker/hooks';
-import { contextSrv } from '../../../core/services/context_srv';
-import { type Role } from '../../../types/accessControl';
-import { type TeamDTO } from '../../../types/teams';
+import { getTeamsDependencies, type Role } from '../dependencies';
+import { type TeamDTO } from '../types';
 
 import { getStatusCardProps, useCreateTeamOrchestrate } from './CreateTeamAPICalls';
 import { StepResultAlert } from './StepResultAlert';
@@ -25,6 +21,7 @@ const pageNav: NavModelItem = {
 };
 
 const CreateTeam = (): JSX.Element => {
+  const { contextSrv, Page, TeamRolePicker, useRoleOptions } = getTeamsDependencies();
   const currentOrgId = contextSrv.user.orgId;
   const styles = useStyles2(getStyles);
 

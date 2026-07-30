@@ -341,20 +341,24 @@ export function getAppRoutes(): RouteDescriptor[] {
       path: '/org/teams',
       roles: () =>
         contextSrv.evaluatePermission([AccessControlAction.ActionTeamsRead, AccessControlAction.ActionTeamsCreate]),
-      component: SafeDynamicImport(() => import(/* webpackChunkName: "TeamList" */ 'app/features/teams/TeamList')),
+      component: SafeDynamicImport(() =>
+        import(/* webpackChunkName: "TeamList" */ 'app/features/teams').then((m) => ({ default: m.TeamList }))
+      ),
     },
     {
       path: '/org/teams/new',
       roles: () => contextSrv.evaluatePermission([AccessControlAction.ActionTeamsCreate]),
-      component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "CreateTeam" */ '../features/teams/create-team/CreateTeam')
+      component: SafeDynamicImport(() =>
+        import(/* webpackChunkName: "CreateTeam" */ 'app/features/teams').then((m) => ({ default: m.CreateTeam }))
       ),
     },
     {
       path: '/org/teams/edit/:uid/:page?',
       roles: () =>
         contextSrv.evaluatePermission([AccessControlAction.ActionTeamsRead, AccessControlAction.ActionTeamsCreate]),
-      component: SafeDynamicImport(() => import(/* webpackChunkName: "TeamPages" */ 'app/features/teams/TeamPages')),
+      component: SafeDynamicImport(() =>
+        import(/* webpackChunkName: "TeamPages" */ 'app/features/teams').then((m) => ({ default: m.TeamPages }))
+      ),
     },
     // ADMIN
     {
