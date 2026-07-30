@@ -7,7 +7,7 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -61,7 +61,7 @@ jobs:
         env:
           TEST_SHARD: ${{ matrix.shard }}
           TEST_SHARD_TOTAL: 8
-          TEST_MAX_WORKERS: 100%
+          TEST_MAX_WORKERS: 2
 
   backend:
     name: Backend build & unit tests
