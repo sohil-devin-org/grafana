@@ -281,6 +281,7 @@
     "@grafana/i18n": "workspace:*",
     "@grafana/lezer-logql": "0.4.0",
     "@grafana/llm": "1.0.9",
+    "@grafana/migrate-to-cloud": "workspace:*",
     "@grafana/o11y-ds-frontend": "workspace:*",
     "@grafana/plugin-ui": "^0.13.1",
     "@grafana/prometheus": "13.1.2",

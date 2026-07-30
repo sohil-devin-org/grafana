@@ -19,4 +19,8 @@ const cloudMigrationAPI = generatedAPI.injectEndpoints({
   }),
 });
 
-export const { useGetLocalPluginListQuery } = cloudMigrationAPI;
+// Explicitly typed so declaration emit stays portable (the inferred hook type
+// references non-exported internals of @grafana/api-clients).
+export function useGetLocalPluginListQuery(): { currentData?: LocalPlugin[]; isLoading: boolean; isError: boolean } {
+  return cloudMigrationAPI.endpoints.getLocalPluginList.useQuery();
+}

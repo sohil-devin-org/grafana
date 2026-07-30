@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
+import { useState } from 'react';
 import { Provider } from 'react-redux';
 import { map, type Observable } from 'rxjs';
 
@@ -48,5 +49,6 @@ export function createTestStore() {
 }
 
 export function TestProvider({ children }: React.PropsWithChildren) {
-  return <Provider store={createTestStore()}>{children}</Provider>;
+  const [store] = useState(createTestStore);
+  return <Provider store={store}>{children}</Provider>;
 }

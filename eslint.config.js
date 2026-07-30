@@ -444,6 +444,7 @@ module.exports = [
       'packages/grafana-ui/**/*.{ts,tsx,js,jsx}',
       'packages/grafana-data/**/*.{ts,tsx,js,jsx}',
       'packages/grafana-sql/**/*.{ts,tsx,js,jsx}',
+      'packages/grafana-migrate-to-cloud/**/*.{ts,tsx,js,jsx}',
       ...pluginsToTranslate.map((plugin) => `${plugin}/**/*.{ts,tsx,js,jsx}`),
     ],
     ignores: [
