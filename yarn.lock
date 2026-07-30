@@ -2269,7 +2269,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grafana/auth-config@workspace:packages/grafana-auth-config":
+"@grafana/auth-config@workspace:*, @grafana/auth-config@workspace:packages/grafana-auth-config":
   version: 0.0.0-use.local
   resolution: "@grafana/auth-config@workspace:packages/grafana-auth-config"
   dependencies:
@@ -2354,7 +2354,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@grafana/command-palette@workspace:packages/grafana-command-palette":
+"@grafana/command-palette@workspace:*, @grafana/command-palette@workspace:packages/grafana-command-palette":
   version: 0.0.0-use.local
   resolution: "@grafana/command-palette@workspace:packages/grafana-command-palette"
   dependencies:
@@ -2390,7 +2390,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@grafana/correlations@workspace:packages/grafana-correlations":
+"@grafana/correlations@workspace:*, @grafana/correlations@workspace:packages/grafana-correlations":
   version: 0.0.0-use.local
   resolution: "@grafana/correlations@workspace:packages/grafana-correlations"
   dependencies:
@@ -3165,7 +3165,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@grafana/serviceaccounts@workspace:packages/grafana-serviceaccounts":
+"@grafana/serviceaccounts@workspace:*, @grafana/serviceaccounts@workspace:packages/grafana-serviceaccounts":
   version: 0.0.0-use.local
   resolution: "@grafana/serviceaccounts@workspace:packages/grafana-serviceaccounts"
   dependencies:
@@ -3248,7 +3248,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@grafana/support-bundles@workspace:packages/grafana-support-bundles":
+"@grafana/support-bundles@workspace:*, @grafana/support-bundles@workspace:packages/grafana-support-bundles":
   version: 0.0.0-use.local
   resolution: "@grafana/support-bundles@workspace:packages/grafana-support-bundles"
   dependencies:
@@ -3276,7 +3276,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@grafana/teams@workspace:packages/grafana-teams":
+"@grafana/teams@workspace:*, @grafana/teams@workspace:packages/grafana-teams":
   version: 0.0.0-use.local
   resolution: "@grafana/teams@workspace:packages/grafana-teams"
   dependencies:
@@ -19119,8 +19119,11 @@ __metadata:
     "@grafana/alerting": "workspace:*"
     "@grafana/api-clients": "workspace:*"
     "@grafana/assistant": "npm:0.1.30"
+    "@grafana/auth-config": "workspace:*"
     "@grafana/aws-sdk": "npm:^0.10.1"
     "@grafana/bookmarks": "workspace:*"
+    "@grafana/command-palette": "workspace:*"
+    "@grafana/correlations": "workspace:*"
     "@grafana/data": "workspace:*"
     "@grafana/e2e-selectors": "workspace:*"
     "@grafana/eslint-config": "npm:8.2.0"
@@ -19143,7 +19146,10 @@ __metadata:
     "@grafana/scenes": "npm:8.13.5"
     "@grafana/scenes-react": "npm:8.13.5"
     "@grafana/schema": "workspace:*"
+    "@grafana/serviceaccounts": "workspace:*"
     "@grafana/sql": "workspace:*"
+    "@grafana/support-bundles": "workspace:*"
+    "@grafana/teams": "workspace:*"
     "@grafana/test-utils": "workspace:*"
     "@grafana/ui": "workspace:*"
     "@hello-pangea/dnd": "npm:18.0.1"
