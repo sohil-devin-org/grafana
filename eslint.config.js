@@ -469,7 +469,8 @@ module.exports = [
       'public/test/**',
       '**/*.{test,spec,story}.{ts,tsx}',
       '**/{tests,__mocks__,__tests__,fixtures,spec,mocks}/**',
-      '**/{test-utils,testUtils,testHelpers,mocks}.{ts,tsx}',
+      '**/{test-utils,testHelpers,mocks}.{ts,tsx}',
+      'packages/*/src/testUtils.{ts,tsx}',
       '**/mock*.{ts,tsx}',
     ],
     rules: {
