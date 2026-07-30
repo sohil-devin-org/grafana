@@ -4,13 +4,12 @@ import { useParams } from 'react-router-dom-v5-compat';
 import { type NavModelItem } from '@grafana/data';
 import { t } from '@grafana/i18n';
 import { Badge, Stack, Text } from '@grafana/ui';
-import { Page } from 'app/core/components/Page/Page';
-import { PageNotFound } from 'app/core/components/PageNotFound/PageNotFound';
-import { useDispatch, useSelector } from 'app/types/store';
 
 import { ProviderConfigForm } from './ProviderConfigForm';
 import { UIMap } from './constants';
+import { getAuthConfigDeps } from './deps';
 import { loadProviders } from './state/actions';
+import { useDispatch, useSelector } from './store';
 import { type SSOProvider } from './types';
 
 const getPageNav = (config?: SSOProvider): NavModelItem => {
@@ -40,6 +39,7 @@ const getPageNav = (config?: SSOProvider): NavModelItem => {
  * Separate the Page logic from the Content logic for easier testing.
  */
 export const ProviderConfigPage = () => {
+  const { Page, PageNotFound } = getAuthConfigDeps();
   const dispatch = useDispatch();
   const { isLoading, providers } = useSelector((store) => store.authConfig);
   const { provider = '' } = useParams();

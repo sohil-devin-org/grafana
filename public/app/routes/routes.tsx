@@ -362,8 +362,10 @@ export function getAppRoutes(): RouteDescriptor[] {
     {
       path: '/admin/authentication',
       roles: () => contextSrv.evaluatePermission([AccessControlAction.SettingsWrite]),
-      component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "AdminAuthentication" */ '../features/auth-config/AuthProvidersListPage')
+      component: SafeDynamicImport(() =>
+        import(/* webpackChunkName: "AdminAuthentication" */ '@grafana/auth-config').then((m) => ({
+          default: m.AuthProvidersListPage,
+        }))
       ),
     },
     {
@@ -375,8 +377,10 @@ export function getAppRoutes(): RouteDescriptor[] {
     {
       path: '/admin/authentication/:provider',
       roles: () => contextSrv.evaluatePermission([AccessControlAction.SettingsWrite]),
-      component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "AdminAuthentication" */ '../features/auth-config/ProviderConfigPage')
+      component: SafeDynamicImport(() =>
+        import(/* webpackChunkName: "AdminAuthentication" */ '@grafana/auth-config').then((m) => ({
+          default: m.ProviderConfigPage,
+        }))
       ),
     },
     {

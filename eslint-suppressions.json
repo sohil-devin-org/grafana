@@ -1,4 +1,24 @@
 {
+  "packages/grafana-auth-config/src/FieldRenderer.tsx": {
+    "@grafana/require-no-margin": {
+      "count": 5
+    }
+  },
+  "packages/grafana-auth-config/src/ProviderConfigForm.tsx": {
+    "@grafana/require-no-margin": {
+      "count": 1
+    }
+  },
+  "packages/grafana-auth-config/src/components/ServerDiscoveryModal.tsx": {
+    "@grafana/require-no-margin": {
+      "count": 1
+    }
+  },
+  "packages/grafana-auth-config/src/utils/data.ts": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 1
+    }
+  },
   "packages/grafana-data/src/dataframe/CircularDataFrame.ts": {
     "@typescript-eslint/no-explicit-any": {
       "count": 1
@@ -1301,26 +1321,6 @@
     },
     "@typescript-eslint/no-explicit-any": {
       "count": 2
-    }
-  },
-  "public/app/features/auth-config/FieldRenderer.tsx": {
-    "@grafana/require-no-margin": {
-      "count": 5
-    }
-  },
-  "public/app/features/auth-config/ProviderConfigForm.tsx": {
-    "@grafana/require-no-margin": {
-      "count": 1
-    }
-  },
-  "public/app/features/auth-config/components/ServerDiscoveryModal.tsx": {
-    "@grafana/require-no-margin": {
-      "count": 1
-    }
-  },
-  "public/app/features/auth-config/utils/data.ts": {
-    "@typescript-eslint/consistent-type-assertions": {
-      "count": 1
     }
   },
   "public/app/features/browse-dashboards/components/DeletedDashboardsLimitBanner.tsx": {

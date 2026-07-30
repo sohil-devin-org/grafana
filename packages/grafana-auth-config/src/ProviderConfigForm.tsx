@@ -18,15 +18,11 @@ import {
   Switch,
 } from '@grafana/ui';
 
-import { FormPrompt } from '../../core/components/FormPrompt/FormPrompt';
-import { Page } from '../../core/components/Page/Page';
-
 import { FieldRenderer } from './FieldRenderer';
+import { getAuthConfigDeps } from './deps';
 import { getSectionFields } from './fields';
 import { type SSOProvider, type SSOProviderDTO } from './types';
 import { dataToDTO, dtoToData } from './utils/data';
-
-const appEvents = getAppEvents();
 
 interface ProviderConfigProps {
   config?: SSOProvider;
@@ -35,6 +31,8 @@ interface ProviderConfigProps {
 }
 
 export const ProviderConfigForm = ({ config, provider, isLoading }: ProviderConfigProps) => {
+  const appEvents = getAppEvents();
+  const { Page, FormPrompt } = getAuthConfigDeps();
   const {
     register,
     handleSubmit,

@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type JSX } from 'react';
@@ -5,8 +6,11 @@ import { type JSX } from 'react';
 import { reportInteraction } from '@grafana/runtime';
 
 import { ProviderConfigForm } from './ProviderConfigForm';
+import { registerTestAuthConfigDeps } from './testUtils';
 import { type SSOProvider } from './types';
 import { emptySettings } from './utils/data';
+
+registerTestAuthConfigDeps();
 
 const putMock = jest.fn(() => Promise.resolve({}));
 const deleteMock = jest.fn(() => Promise.resolve({}));
@@ -37,11 +41,6 @@ jest.mock('@grafana/runtime', () => ({
 
 const reportInteractionMock = jest.mocked(reportInteraction);
 
-// Mock the FormPrompt component as it requires Router setup to work
-jest.mock('app/core/components/FormPrompt/FormPrompt', () => ({
-  FormPrompt: () => <></>,
-}));
-
 const testConfig: SSOProvider = {
   id: '300f9b7c-0488-40db-9763-a22ce8bf6b3e',
   provider: 'github',
@@ -61,14 +60,6 @@ const testConfig: SSOProvider = {
     orgMapping: '[]',
   },
 };
-
-jest.mock('app/core/services/context_srv', () => {
-  return {
-    contextSrv: {
-      isGrafanaAdmin: true,
-    },
-  };
-});
 
 const emptyConfig = {
   ...testConfig,

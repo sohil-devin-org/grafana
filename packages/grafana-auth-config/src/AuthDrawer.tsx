@@ -5,10 +5,10 @@ import { connect, type ConnectedProps } from 'react-redux';
 import { type GrafanaTheme2 } from '@grafana/data';
 import { Trans, t } from '@grafana/i18n';
 import { Button, Drawer, Text, TextLink, Switch, useStyles2 } from '@grafana/ui';
-import { useAppNotification } from 'app/core/copy/appNotification';
-import { type StoreState } from 'app/types/store';
 
+import { getAuthConfigDeps } from './deps';
 import { loadSettings, saveSettings } from './state/actions';
+import { type AuthConfigStoreState } from './store';
 
 interface OwnProps {
   onClose: () => void;
@@ -16,7 +16,7 @@ interface OwnProps {
 
 export type Props = OwnProps & ConnectedProps<typeof connector>;
 
-const mapStateToProps = (state: StoreState) => {
+const mapStateToProps = (state: AuthConfigStoreState) => {
   const allowInsecureEmail =
     state.authConfig.settings?.auth?.oauth_allow_insecure_email_lookup.toLowerCase() === 'true';
   return {
@@ -37,6 +37,7 @@ export const AuthDrawerUnconnected = ({
   onClose,
   saveSettings,
 }: Props): JSX.Element => {
+  const { useAppNotification } = getAuthConfigDeps();
   const notifyApp = useAppNotification();
 
   const oauthAllowInsecureEmailLookupOnChange = async () => {

@@ -2,9 +2,9 @@ import { type SelectableValue, isUUID } from '@grafana/data';
 import { Trans, t } from '@grafana/i18n';
 import { config } from '@grafana/runtime';
 import { TextLink } from '@grafana/ui';
-import { contextSrv } from 'app/core/services/context_srv';
 
 import { ServerDiscoveryField } from './components/ServerDiscoveryField';
+import { getAuthConfigDeps } from './deps';
 import { type FieldData, type SSOProvider, type SSOSettingsField } from './types';
 import { isSelectableValue, isSelectableValueArray } from './utils/guards';
 import { isUrlValid, isValidDomain } from './utils/url';
@@ -336,6 +336,7 @@ const workloadIdentityLabel = 'Workload identity';
  * List all the fields that can be used in the form
  */
 export function fieldMap(provider: string): Record<string, FieldData> {
+  const { contextSrv } = getAuthConfigDeps();
   const orgMappingLabel = t('auth-config.fields.organization-mapping-label', 'Organization mapping');
   const orgAttributePathLabel = t(
     'auth-config.fields.organization-attribute-path-label',
