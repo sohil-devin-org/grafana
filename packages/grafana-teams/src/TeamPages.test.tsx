@@ -1,3 +1,5 @@
+import 'app/features/teams';
+
 import { Route, Routes } from 'react-router-dom-v5-compat';
 import { screen, render, testWithLicenseFeatures, waitFor } from 'test/test-utils';
 

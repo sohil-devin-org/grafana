@@ -1,20 +1,13 @@
-import { createSelector } from '@reduxjs/toolkit';
-import { memo, useRef } from 'react';
+import { memo, useMemo, useRef } from 'react';
 import { useParams } from 'react-router-dom-v5-compat';
 
-import { featureEnabled } from '@grafana/runtime';
-import { Page } from 'app/core/components/Page/Page';
-import { UpgradeBox } from 'app/core/components/Upgrade/UpgradeBox';
-import config from 'app/core/config';
-import { getNavModel } from 'app/core/selectors/navModel';
-import { contextSrv } from 'app/core/services/context_srv';
-import { AccessControlAction } from 'app/types/accessControl';
-import { type StoreState, useSelector } from 'app/types/store';
+import { config, featureEnabled } from '@grafana/runtime';
 
 import { TeamFolders } from './TeamFolders';
 import TeamGroupSync, { TeamSyncUpgradeContent } from './TeamGroupSync';
 import TeamPermissions from './TeamPermissions';
 import TeamSettings from './TeamSettings';
+import { getTeamsDependencies, TeamsAction } from './dependencies';
 import { useGetTeam } from './hooks';
 import { getTeamLoadingNav } from './state/navModel';
 
@@ -45,19 +38,8 @@ function getPageType(page: string | undefined): PageTypes | undefined {
   }
 }
 
-const pageNavSelector = createSelector(
-  [
-    (state: StoreState) => state.navIndex,
-    (_state: StoreState, pageName: PageTypes) => pageName,
-    (_state: StoreState, _pageName: PageTypes, teamUid: string) => teamUid,
-  ],
-  (navIndex, pageName, teamUid) => {
-    const teamLoadingNav = getTeamLoadingNav(pageName);
-    return getNavModel(navIndex, `team-${pageName}-${teamUid}`, teamLoadingNav).main;
-  }
-);
-
 const TeamPages = memo(() => {
+  const { contextSrv, Page, UpgradeBox, useNavModel } = getTeamsDependencies();
   const isSyncEnabled = useRef(featureEnabled('teamsync'));
   const { uid: teamUid = '', page } = useParams<TeamPageRouteParams>();
 
@@ -65,22 +47,17 @@ const TeamPages = memo(() => {
 
   let defaultPage = PageTypes.Members;
   // With RBAC the settings page will always be available
-  if (!team || !contextSrv.hasPermissionInMetadata(AccessControlAction.ActionTeamsPermissionsRead, team)) {
+  if (!team || !contextSrv.hasPermissionInMetadata(TeamsAction.ActionTeamsPermissionsRead, team)) {
     defaultPage = PageTypes.Settings;
   }
   const currentPage = getPageType(page) ?? defaultPage;
-  const pageNav = useSelector((state) => pageNavSelector(state, currentPage, teamUid));
+  const teamLoadingNav = useMemo(() => getTeamLoadingNav(currentPage), [currentPage]);
+  const pageNav = useNavModel(`team-${currentPage}-${teamUid}`, teamLoadingNav).main;
 
   const renderPage = () => {
-    const canReadTeam = contextSrv.hasPermissionInMetadata(AccessControlAction.ActionTeamsRead, team!);
-    const canReadTeamPermissions = contextSrv.hasPermissionInMetadata(
-      AccessControlAction.ActionTeamsPermissionsRead,
-      team!
-    );
-    const canWriteTeamPermissions = contextSrv.hasPermissionInMetadata(
-      AccessControlAction.ActionTeamsPermissionsWrite,
-      team!
-    );
+    const canReadTeam = contextSrv.hasPermissionInMetadata(TeamsAction.ActionTeamsRead, team!);
+    const canReadTeamPermissions = contextSrv.hasPermissionInMetadata(TeamsAction.ActionTeamsPermissionsRead, team!);
+    const canWriteTeamPermissions = contextSrv.hasPermissionInMetadata(TeamsAction.ActionTeamsPermissionsWrite, team!);
 
     switch (currentPage) {
       case PageTypes.Members:

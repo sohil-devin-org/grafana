@@ -12,12 +12,9 @@ import { AppEvents } from '@grafana/data';
 import { t } from '@grafana/i18n';
 import { getAppEvents } from '@grafana/runtime';
 
-import { useCreateFolder } from '../../../api/clients/folder/v1beta1/hooks';
-import { extractErrorMessage } from '../../../api/utils';
-import { contextSrv } from '../../../core/services/context_srv';
-import { type Role } from '../../../types/accessControl';
-import { type TeamDTO } from '../../../types/teams';
+import { getTeamsDependencies, type Role } from '../dependencies';
 import { canUpdateRoles } from '../hooks';
+import { type TeamDTO } from '../types';
 
 import { type StepResultAlertProps } from './StepResultAlert';
 
@@ -68,6 +65,7 @@ function useReportState() {
       return;
     }
 
+    const { extractErrorMessage } = getTeamsDependencies();
     const messages = getMessages()[call];
 
     // In this case the createTeam page was unmounted, user could have navigated somewhere, but we still are running
@@ -101,6 +99,7 @@ type CreateTeamResult = {
  * @param autocreateTeamFolder
  */
 export function useCreateTeamOrchestrate(pendingRoles: Role[], autocreateTeamFolder: boolean) {
+  const { contextSrv, useCreateFolder } = getTeamsDependencies();
   const [createTeamTrigger] = useCreateTeamMutation();
   const [createFolderTrigger] = useCreateFolder();
   const [setTeamRoles] = useSetTeamRolesMutation();
@@ -224,6 +223,7 @@ export function useCreateTeamOrchestrate(pendingRoles: Role[], autocreateTeamFol
  * @param href
  */
 export function getStatusCardProps(status: CallState, type: CallTypes, href?: string): StepResultAlertProps {
+  const { extractErrorMessage } = getTeamsDependencies();
   const messages = getMessages()[type];
   if (status.state === 'error') {
     return {

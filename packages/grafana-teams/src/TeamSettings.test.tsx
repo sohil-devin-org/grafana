@@ -1,3 +1,5 @@
+import 'app/features/teams';
+
 import { render, screen } from 'test/test-utils';
 
 import { setBackendSrv } from '@grafana/runtime';

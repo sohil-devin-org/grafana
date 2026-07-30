@@ -1,7 +1,5 @@
-import { Permissions } from 'app/core/components/AccessControl/Permissions';
-import { contextSrv } from 'app/core/services/context_srv';
-import { AccessControlAction } from 'app/types/accessControl';
-import { type Team } from 'app/types/teams';
+import { getTeamsDependencies, TeamsAction } from './dependencies';
+import { type Team } from './types';
 
 type TeamPermissionsProps = {
   team: Team;
@@ -9,10 +7,8 @@ type TeamPermissionsProps = {
 
 // TeamPermissions component replaces TeamMembers component when the accesscontrol feature flag is set
 const TeamPermissions = (props: TeamPermissionsProps) => {
-  let canSetPermissions = contextSrv.hasPermissionInMetadata(
-    AccessControlAction.ActionTeamsPermissionsWrite,
-    props.team
-  );
+  const { contextSrv, Permissions } = getTeamsDependencies();
+  let canSetPermissions = contextSrv.hasPermissionInMetadata(TeamsAction.ActionTeamsPermissionsWrite, props.team);
 
   if (props.team.isProvisioned) {
     canSetPermissions = false;

@@ -3,7 +3,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { type SortingRule } from 'react-table';
 
-import { type DashboardHit } from '@grafana/api-clients/rtkq/dashboard/v0alpha1';
+import {
+  type DashboardHit,
+  useLazySearchDashboardsAndFoldersQuery,
+} from '@grafana/api-clients/rtkq/dashboard/v0alpha1';
 import { Trans, t } from '@grafana/i18n';
 import { reportInteraction } from '@grafana/runtime';
 import {
@@ -23,21 +26,11 @@ import {
   TextLink,
   useStyles2,
 } from '@grafana/ui';
-import { useLazySearchDashboardsAndFoldersQuery } from 'app/api/clients/dashboard/v0alpha1';
-import { Page } from 'app/core/components/Page/Page';
-import { fetchRoleOptions } from 'app/core/components/RolePicker/api';
-import { useAppNotification } from 'app/core/copy/appNotification';
-import { contextSrv } from 'app/core/services/context_srv';
-import { type Role, AccessControlAction } from 'app/types/accessControl';
-import { type TeamWithRoles } from 'app/types/teams';
-
-import { appEvents } from '../../core/app_events';
-import { TeamRolePicker } from '../../core/components/RolePicker/TeamRolePicker';
-import { ShowModalReactEvent } from '../../types/events';
-import { EnterpriseAuthFeaturesCard } from '../admin/EnterpriseAuthFeaturesCard';
 
 import { TeamDeleteModal } from './TeamDeleteModal';
+import { getTeamsDependencies, type Role, TeamsAction } from './dependencies';
 import { useDeleteTeam, useGetTeams } from './hooks';
+import { type TeamWithRoles } from './types';
 
 type Cell<T extends keyof TeamWithRoles = keyof TeamWithRoles> = CellProps<TeamWithRoles, TeamWithRoles[T]>;
 
@@ -56,7 +49,16 @@ const skeletonData: TeamWithRoles[] = new Array(3).fill(null).map((_, index) => 
 }));
 
 const TeamList = () => {
-  const canCreate = contextSrv.hasPermission(AccessControlAction.ActionTeamsCreate);
+  const {
+    contextSrv,
+    EnterpriseAuthFeaturesCard,
+    fetchRoleOptions,
+    Page,
+    showModal,
+    TeamRolePicker,
+    useAppNotification,
+  } = getTeamsDependencies();
+  const canCreate = contextSrv.hasPermission(TeamsAction.ActionTeamsCreate);
   const displayRolePicker = shouldDisplayRolePicker();
   const pageSize = 20;
 
@@ -85,10 +87,10 @@ const TeamList = () => {
   };
 
   useEffect(() => {
-    if (contextSrv.licensedAccessControlEnabled() && contextSrv.hasPermission(AccessControlAction.ActionRolesList)) {
+    if (contextSrv.licensedAccessControlEnabled() && contextSrv.hasPermission(TeamsAction.ActionRolesList)) {
       fetchRoleOptions().then((roles) => setRoleOptions(roles));
     }
-  }, []);
+  }, [contextSrv, fetchRoleOptions]);
 
   useEffect(() => {
     return () => {
@@ -120,7 +122,7 @@ const TeamList = () => {
             return <Skeleton width={100} />;
           }
 
-          const canReadTeam = contextSrv.hasPermissionInMetadata(AccessControlAction.ActionTeamsRead, original);
+          const canReadTeam = contextSrv.hasPermissionInMetadata(TeamsAction.ActionTeamsRead, original);
           if (!canReadTeam) {
             return value;
           }
@@ -169,10 +171,7 @@ const TeamList = () => {
                 if (isLoading) {
                   return <Skeleton width={320} height={32} containerClassName={styles.blockSkeleton} />;
                 }
-                const canSeeTeamRoles = contextSrv.hasPermissionInMetadata(
-                  AccessControlAction.ActionTeamsRolesList,
-                  original
-                );
+                const canSeeTeamRoles = contextSrv.hasPermissionInMetadata(TeamsAction.ActionTeamsRolesList, original);
                 return (
                   canSeeTeamRoles && (
                     <TeamRolePicker
@@ -212,8 +211,8 @@ const TeamList = () => {
             );
           }
 
-          const canReadTeam = contextSrv.hasPermissionInMetadata(AccessControlAction.ActionTeamsRead, original);
-          const canDelete = contextSrv.hasPermissionInMetadata(AccessControlAction.ActionTeamsDelete, original);
+          const canReadTeam = contextSrv.hasPermissionInMetadata(TeamsAction.ActionTeamsRead, original);
+          const canDelete = contextSrv.hasPermissionInMetadata(TeamsAction.ActionTeamsDelete, original);
 
           const showDeleteModal = async () => {
             let ownedFolders: DashboardHit[] = [];
@@ -249,19 +248,14 @@ const TeamList = () => {
             reportInteraction('grafana_teams_list_delete_button_clicked', {
               ownedFolder: ownedFolders && ownedFolders.length > 0,
             });
-            appEvents.publish(
-              new ShowModalReactEvent({
-                component: TeamDeleteModal,
-                props: {
-                  onConfirm: async () => {
-                    reportInteraction('grafana_teams_list_delete_modal_confirm_clicked');
-                    await deleteTeam({ uid: original.uid }).unwrap();
-                  },
-                  teamName: original.name,
-                  ownedFolder: ownedFolders && ownedFolders.length > 0,
-                },
-              })
-            );
+            showModal(TeamDeleteModal, {
+              onConfirm: async () => {
+                reportInteraction('grafana_teams_list_delete_modal_confirm_clicked');
+                await deleteTeam({ uid: original.uid }).unwrap();
+              },
+              teamName: original.name,
+              ownedFolder: ownedFolders && ownedFolders.length > 0,
+            });
           };
           return (
             <Stack direction="row" justifyContent="flex-end" gap={2}>
@@ -296,7 +290,18 @@ const TeamList = () => {
         },
       },
     ],
-    [displayRolePicker, isLoading, styles.blockSkeleton, roleOptions, deleteTeam, triggerFoldersQuery, notifyApp]
+    [
+      displayRolePicker,
+      isLoading,
+      styles.blockSkeleton,
+      roleOptions,
+      deleteTeam,
+      triggerFoldersQuery,
+      notifyApp,
+      contextSrv,
+      showModal,
+      TeamRolePicker,
+    ]
   );
 
   return (
@@ -376,10 +381,11 @@ const TeamList = () => {
 };
 
 function shouldDisplayRolePicker(): boolean {
+  const { contextSrv } = getTeamsDependencies();
   return (
     contextSrv.licensedAccessControlEnabled() &&
-    contextSrv.hasPermission(AccessControlAction.ActionTeamsRolesList) &&
-    contextSrv.hasPermission(AccessControlAction.ActionRolesList)
+    contextSrv.hasPermission(TeamsAction.ActionTeamsRolesList) &&
+    contextSrv.hasPermission(TeamsAction.ActionRolesList)
   );
 }
 

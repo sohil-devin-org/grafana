@@ -1,3 +1,5 @@
+import 'app/features/teams';
+
 import { HttpResponse, http } from 'msw';
 import { render, screen, userEvent, waitFor, within } from 'test/test-utils';
 
@@ -5,11 +7,10 @@ import { setBackendSrv } from '@grafana/runtime';
 import { setupMockServer } from '@grafana/test-utils/server';
 import { MOCK_TEAMS } from '@grafana/test-utils/unstable';
 import { ModalRoot } from '@grafana/ui';
+import { appEvents } from 'app/core/app_events';
 import { backendSrv } from 'app/core/services/backend_srv';
 import { contextSrv } from 'app/core/services/context_srv';
-
-import { appEvents } from '../../core/app_events';
-import { ShowModalReactEvent } from '../../types/events';
+import { ShowModalReactEvent } from 'app/types/events';
 
 import { TeamDeleteModal } from './TeamDeleteModal';
 import TeamList from './TeamList';
