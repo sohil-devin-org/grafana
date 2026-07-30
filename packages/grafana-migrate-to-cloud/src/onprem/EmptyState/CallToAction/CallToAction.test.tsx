@@ -1,16 +1,13 @@
+import '@testing-library/jest-dom';
+
 import { render as rtlRender, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { TestProvider } from 'test/helpers/TestProvider';
 
-import { setBackendSrv } from '@grafana/runtime';
-import { backendSrv } from 'app/core/services/backend_srv';
-
+import { TestProvider } from '../../../../tests/provider';
 import { registerMockAPI } from '../../../fixtures/mswAPI';
 import { validCloudMigrationToken } from '../../../fixtures/tokens';
 
 import { CallToAction } from './CallToAction';
-
-setBackendSrv(backendSrv);
 
 function render(...[ui, options]: Parameters<typeof rtlRender>) {
   rtlRender(<TestProvider>{ui}</TestProvider>, options);

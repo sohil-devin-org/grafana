@@ -332,6 +332,31 @@
       "count": 1
     }
   },
+  "packages/grafana-migrate-to-cloud/src/cloud/MigrationTokenPane/CreateTokenModal.tsx": {
+    "@grafana/require-no-margin": {
+      "count": 1
+    }
+  },
+  "packages/grafana-migrate-to-cloud/src/onprem/ConfigureSnapshot.tsx": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 2
+    }
+  },
+  "packages/grafana-migrate-to-cloud/src/onprem/EmptyState/CallToAction/ConnectModal.tsx": {
+    "@grafana/require-no-margin": {
+      "count": 1
+    }
+  },
+  "packages/grafana-migrate-to-cloud/src/onprem/resourceDependency.ts": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 2
+    }
+  },
+  "packages/grafana-migrate-to-cloud/src/onprem/useNotifyOnSuccess.tsx": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 1
+    }
+  },
   "packages/grafana-o11y-ds-frontend/src/TraceToProfiles/TraceToProfilesSettings.tsx": {
     "react-hooks/exhaustive-deps": {
       "count": 1
@@ -2001,31 +2026,6 @@
   },
   "public/app/features/live/centrifuge/channel.ts": {
     "@typescript-eslint/no-explicit-any": {
-      "count": 1
-    }
-  },
-  "public/app/features/migrate-to-cloud/cloud/MigrationTokenPane/CreateTokenModal.tsx": {
-    "@grafana/require-no-margin": {
-      "count": 1
-    }
-  },
-  "public/app/features/migrate-to-cloud/onprem/ConfigureSnapshot.tsx": {
-    "@typescript-eslint/consistent-type-assertions": {
-      "count": 2
-    }
-  },
-  "public/app/features/migrate-to-cloud/onprem/EmptyState/CallToAction/ConnectModal.tsx": {
-    "@grafana/require-no-margin": {
-      "count": 1
-    }
-  },
-  "public/app/features/migrate-to-cloud/onprem/resourceDependency.ts": {
-    "@typescript-eslint/consistent-type-assertions": {
-      "count": 2
-    }
-  },
-  "public/app/features/migrate-to-cloud/onprem/useNotifyOnSuccess.tsx": {
-    "@typescript-eslint/consistent-type-assertions": {
       "count": 1
     }
   },

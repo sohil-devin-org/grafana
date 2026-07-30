@@ -1,7 +1,7 @@
 import { handleRequestError } from '@grafana/api-clients';
 import { generatedAPI } from '@grafana/api-clients/internal/rtkq/legacy/migrate-to-cloud';
-import { getLocalPlugins } from 'app/features/plugins/admin/api';
-import { type LocalPlugin } from 'app/features/plugins/admin/types';
+
+import { getMigrateToCloudDependencies, type LocalPlugin } from '../dependencies';
 
 const cloudMigrationAPI = generatedAPI.injectEndpoints({
   endpoints: (build) => ({
@@ -9,7 +9,7 @@ const cloudMigrationAPI = generatedAPI.injectEndpoints({
     getLocalPluginList: build.query<LocalPlugin[], void>({
       queryFn: async () => {
         try {
-          const list = await getLocalPlugins();
+          const list = await getMigrateToCloudDependencies().getLocalPlugins();
           return { data: list };
         } catch (error) {
           return handleRequestError(error);
@@ -19,4 +19,8 @@ const cloudMigrationAPI = generatedAPI.injectEndpoints({
   }),
 });
 
-export const { useGetLocalPluginListQuery } = cloudMigrationAPI;
+// Explicitly typed so declaration emit stays portable (the inferred hook type
+// references non-exported internals of @grafana/api-clients).
+export function useGetLocalPluginListQuery(): { currentData?: LocalPlugin[]; isLoading: boolean; isError: boolean } {
+  return cloudMigrationAPI.endpoints.getLocalPluginList.useQuery();
+}

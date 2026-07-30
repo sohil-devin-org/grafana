@@ -10,7 +10,12 @@ export default defineConfig({
       'packages/*/dist/**/*',
       '**/node_modules/**/*',
     ],
-    input: ['public/**/*.{tsx,ts}', 'packages/grafana-ui/**/*.{tsx,ts}', 'packages/grafana-data/**/*.{tsx,ts}'],
+    input: [
+      'public/**/*.{tsx,ts}',
+      'packages/grafana-ui/**/*.{tsx,ts}',
+      'packages/grafana-data/**/*.{tsx,ts}',
+      'packages/grafana-migrate-to-cloud/**/*.{tsx,ts}',
+    ],
     output: 'public/locales/{{language}}/{{namespace}}.json',
     defaultNS: 'grafana',
     functions: ['t', '*.t'],
