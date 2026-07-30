@@ -24,8 +24,6 @@ import { getSectionFields } from './fields';
 import { type SSOProvider, type SSOProviderDTO } from './types';
 import { dataToDTO, dtoToData } from './utils/data';
 
-const appEvents = getAppEvents();
-
 interface ProviderConfigProps {
   config?: SSOProvider;
   isLoading?: boolean;
@@ -33,6 +31,7 @@ interface ProviderConfigProps {
 }
 
 export const ProviderConfigForm = ({ config, provider, isLoading }: ProviderConfigProps) => {
+  const appEvents = getAppEvents();
   const { Page, FormPrompt } = getAuthConfigDeps();
   const {
     register,
