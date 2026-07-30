@@ -391,6 +391,21 @@
       "count": 2
     }
   },
+  "packages/grafana-serviceaccounts/src/ServiceAccountCreatePage.tsx": {
+    "@grafana/require-no-margin": {
+      "count": 4
+    }
+  },
+  "packages/grafana-serviceaccounts/src/components/CreateTokenModal.tsx": {
+    "@grafana/require-no-margin": {
+      "count": 4
+    }
+  },
+  "packages/grafana-serviceaccounts/src/state/reducers.ts": {
+    "@typescript-eslint/consistent-type-assertions": {
+      "count": 1
+    }
+  },
   "packages/grafana-sql/src/components/DatasetSelector.tsx": {
     "react-hooks/exhaustive-deps": {
       "count": 1
@@ -2202,21 +2217,6 @@
   "public/app/features/search/utils.ts": {
     "@grafana/no-direct-local-storage-access": {
       "count": 3
-    }
-  },
-  "public/app/features/serviceaccounts/ServiceAccountCreatePage.tsx": {
-    "@grafana/require-no-margin": {
-      "count": 4
-    }
-  },
-  "public/app/features/serviceaccounts/components/CreateTokenModal.tsx": {
-    "@grafana/require-no-margin": {
-      "count": 4
-    }
-  },
-  "public/app/features/serviceaccounts/state/reducers.ts": {
-    "@typescript-eslint/consistent-type-assertions": {
-      "count": 1
     }
   },
   "public/app/features/templating/fieldAccessorCache.ts": {
