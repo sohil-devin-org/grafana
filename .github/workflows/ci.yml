@@ -24,7 +24,7 @@ jobs:
       - run: corepack enable
       - uses: actions/cache@v4
         with:
-          path: .yarn/cache
+          path: ~/.yarn/berry/cache
           key: yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: yarn-
       - run: yarn install --immutable
@@ -48,9 +48,14 @@ jobs:
       - run: corepack enable
       - uses: actions/cache@v4
         with:
-          path: .yarn/cache
+          path: ~/.yarn/berry/cache
           key: yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: yarn-
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - name: Generate dashboard migration golden files
+        run: make -C apps/dashboard generate-golden-files
       - run: yarn install --immutable
       - run: yarn run test:ci
         env:
