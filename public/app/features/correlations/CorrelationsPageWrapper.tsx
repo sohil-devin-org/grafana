@@ -1,18 +1,45 @@
 import { useState } from 'react';
 
 import { handleRequestError } from '@grafana/api-clients';
-import { useDeleteCorrelationMutation } from '@grafana/api-clients/rtkq/correlations/v0alpha1';
+import {
+  CorrelationsPage,
+  type CorrelationsPageLayoutProps,
+  type GetCorrelationsParams,
+  type RemoveCorrelationParams,
+  setCorrelationsDataSourcePicker,
+  useCorrelations,
+  useCorrelationsK8s,
+} from '@grafana/correlations';
 import { config } from '@grafana/runtime';
+// Imported for its side effect: enhances the generated correlations API endpoints
+// with app notification handling before the package components use them.
+import { useDeleteCorrelationMutation } from 'app/api/clients/correlations/v0alpha1';
+import { Page } from 'app/core/components/Page/Page';
+import { useNavModel } from 'app/core/hooks/useNavModel';
+import { contextSrv } from 'app/core/services/context_srv';
+import { DataSourcePicker } from 'app/features/datasources/components/picker/DataSourcePicker';
+import { AccessControlAction } from 'app/types/accessControl';
 
-import CorrelationsPage from './CorrelationsPage';
-import { type GetCorrelationsParams, type RemoveCorrelationParams } from './types';
-import { useCorrelations } from './useCorrelations';
-import { useCorrelationsK8s } from './useCorrelationsK8s';
+setCorrelationsDataSourcePicker(DataSourcePicker);
+
+function CorrelationsPageLayout({ subTitle, actions, children }: CorrelationsPageLayoutProps) {
+  const navModel = useNavModel('correlations');
+
+  return (
+    <Page navModel={navModel} subTitle={subTitle} actions={actions}>
+      <Page.Contents>{children}</Page.Contents>
+    </Page>
+  );
+}
+
+const canWriteCorrelations = () => contextSrv.hasPermission(AccessControlAction.DataSourcesWrite);
 
 export function CorrelationsPageLegacy() {
   const { remove, get } = useCorrelations();
   return (
     <CorrelationsPage
+      canWriteCorrelations={canWriteCorrelations()}
+      PageLayout={CorrelationsPageLayout}
       fetchCorrelations={get.execute}
       correlations={get.value}
       isLoading={get.loading}
@@ -37,6 +64,8 @@ export function CorrelationsPageAppPlatform() {
 
   return (
     <CorrelationsPage
+      canWriteCorrelations={canWriteCorrelations()}
+      PageLayout={CorrelationsPageLayout}
       fetchCorrelations={enhRefetch}
       changePageFn={(toPage) => {
         setPage(toPage);

@@ -3,6 +3,7 @@ import { useEffect, useId, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAsync } from 'react-use';
 
+import { generateDefaultLabel, getTransformationVars } from '@grafana/correlations';
 import {
   type DataLinkTransformationConfig,
   type ExploreCorrelationHelperData,
@@ -24,9 +25,6 @@ import {
   useStyles2,
 } from '@grafana/ui';
 import { useDispatch, useSelector } from 'app/types/store';
-
-import { getTransformationVars } from '../correlations/transformations';
-import { generateDefaultLabel } from '../correlations/utils';
 
 import { CorrelationTransformationAddModal } from './CorrelationTransformationAddModal';
 import { changeCorrelationHelperData } from './state/explorePane';

@@ -5,8 +5,8 @@ import { type DataSourceInstanceSettings, type GrafanaTheme2 } from '@grafana/da
 import { Trans, t } from '@grafana/i18n';
 import { type CorrelationExternal } from '@grafana/runtime';
 import { Field, FieldSet, Input, Select, useStyles2 } from '@grafana/ui';
-import { DataSourcePicker } from 'app/features/datasources/components/picker/DataSourcePicker';
 
+import { CorrelationsDataSourcePicker } from '../components/DataSourcePicker';
 import { type CorrelationType } from '../types';
 
 import { QueryEditorField } from './QueryEditorField';
@@ -113,7 +113,7 @@ export const ConfigureCorrelationTargetForm = () => {
                       invalid={!!errors.targetUID}
                       error={errors.targetUID?.message}
                     >
-                      <DataSourcePicker
+                      <CorrelationsDataSourcePicker
                         onChange={withDsUID(onChange)}
                         noDefault
                         current={value}

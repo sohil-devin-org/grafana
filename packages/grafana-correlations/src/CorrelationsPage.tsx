@@ -1,6 +1,6 @@
 import { css } from '@emotion/css';
 import { negate } from 'lodash';
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { type ComponentType, memo, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { type Status } from '@grafana/api-clients/rtkq/correlations/v0alpha1';
 import { type DataSourceInstanceSettings, type GrafanaTheme2 } from '@grafana/data';
@@ -26,17 +26,25 @@ import {
   Pagination,
   TextLink,
 } from '@grafana/ui';
-import { Page } from 'app/core/components/Page/Page';
-import { useNavModel } from 'app/core/hooks/useNavModel';
-import { contextSrv } from 'app/core/services/context_srv';
-import { AccessControlAction } from 'app/types/accessControl';
 
 import { AddCorrelationFormWrapper } from './Forms/AddCorrelationForm';
 import { EditCorrelationFormWrapper } from './Forms/EditCorrelationForm';
 import { EmptyCorrelationsCTA } from './components/EmptyCorrelationsCTA';
 import type { Correlation, GetCorrelationsParams, RemoveCorrelationParams } from './types';
 
+/**
+ * Page chrome injected by the host app (e.g. Grafana core's Page component with the
+ * correlations nav model). Keeps this package free of app-level navigation concerns.
+ */
+export interface CorrelationsPageLayoutProps {
+  subTitle?: ReactNode;
+  actions?: ReactNode;
+  children?: ReactNode;
+}
+
 type CorrelationsPageProps = {
+  canWriteCorrelations: boolean;
+  PageLayout: ComponentType<CorrelationsPageLayoutProps>;
   fetchCorrelations: (params: GetCorrelationsParams) => Promise<CorrelationsData> | CorrelationsData;
   correlations?: CorrelationsData;
   isLoading: boolean;
@@ -70,8 +78,16 @@ const loaderWrapper = css({
   */
 
 export default function CorrelationsPage(props: CorrelationsPageProps) {
-  const { fetchCorrelations, correlations, isLoading, error, removeFn, changePageFn } = props;
-  const navModel = useNavModel('correlations');
+  const {
+    canWriteCorrelations,
+    PageLayout,
+    fetchCorrelations,
+    correlations,
+    isLoading,
+    error,
+    removeFn,
+    changePageFn,
+  } = props;
   const [isAdding, setIsAddingValue] = useState(false);
   const page = useRef(1);
 
@@ -89,7 +105,6 @@ export default function CorrelationsPage(props: CorrelationsPageProps) {
     }
   };
 
-  const canWriteCorrelations = contextSrv.hasPermission(AccessControlAction.DataSourcesWrite);
   const corrData = correlations?.correlations ?? [];
   const hasWritable = corrData.some(negate(isCorrelationsReadOnly));
 
@@ -187,8 +202,7 @@ export default function CorrelationsPage(props: CorrelationsPageProps) {
   );
 
   return (
-    <Page
-      navModel={navModel}
+    <PageLayout
       subTitle={
         <>
           <Trans i18nKey="correlations.sub-title">
@@ -201,70 +215,68 @@ export default function CorrelationsPage(props: CorrelationsPageProps) {
       }
       actions={addButton}
     >
-      <Page.Contents>
-        <div>
-          {isLoading && (
-            <div className={loaderWrapper}>
-              <LoadingPlaceholder text={t('correlations.list.loading', 'loading...')} />
-            </div>
-          )}
-          {showEmptyListCTA && (
-            <EmptyCorrelationsCTA canWriteCorrelations={canWriteCorrelations} onClick={() => setIsAdding(true)} />
-          )}
-          {
-            // This error is not actionable, it'd be nice to have a recovery button
-            error && (
-              <Alert
-                severity="error"
-                title={t('correlations.alert.title', 'Error fetching correlation data')}
-                topSpacing={2}
-              >
-                {(isFetchError(error) && error.data?.message) ||
-                  t(
-                    'correlations.alert.error-message',
-                    'An unknown error occurred while fetching correlation data. Please try again.'
-                  )}
-              </Alert>
-            )
-          }
-          {isAdding && <AddCorrelationFormWrapper onClose={() => setIsAdding(false)} onCreated={handleAdded} />}
-
-          {correlations && corrData.length >= 1 && (
-            <>
-              <InteractiveTable
-                renderExpandedRow={(correlation) => (
-                  <ExpendedRow
-                    correlation={correlation}
-                    onUpdated={handleUpdated}
-                    readOnly={isCorrelationsReadOnly(correlation) || !canWriteCorrelations}
-                  />
+      <div>
+        {isLoading && (
+          <div className={loaderWrapper}>
+            <LoadingPlaceholder text={t('correlations.list.loading', 'loading...')} />
+          </div>
+        )}
+        {showEmptyListCTA && (
+          <EmptyCorrelationsCTA canWriteCorrelations={canWriteCorrelations} onClick={() => setIsAdding(true)} />
+        )}
+        {
+          // This error is not actionable, it'd be nice to have a recovery button
+          error && (
+            <Alert
+              severity="error"
+              title={t('correlations.alert.title', 'Error fetching correlation data')}
+              topSpacing={2}
+            >
+              {(isFetchError(error) && error.data?.message) ||
+                t(
+                  'correlations.alert.error-message',
+                  'An unknown error occurred while fetching correlation data. Please try again.'
                 )}
-                columns={columns}
-                data={corrData}
-                getRowId={(correlation) => `${correlation.source.uid}-${correlation.uid}`}
-              />
-              <Pagination
-                currentPage={page.current}
-                numberOfPages={
-                  correlations.doesContinue === undefined || correlations.doesContinue === null
-                    ? Math.ceil(correlations?.totalCount / correlations?.limit)
-                    : 0
+            </Alert>
+          )
+        }
+        {isAdding && <AddCorrelationFormWrapper onClose={() => setIsAdding(false)} onCreated={handleAdded} />}
+
+        {correlations && corrData.length >= 1 && (
+          <>
+            <InteractiveTable
+              renderExpandedRow={(correlation) => (
+                <ExpendedRow
+                  correlation={correlation}
+                  onUpdated={handleUpdated}
+                  readOnly={isCorrelationsReadOnly(correlation) || !canWriteCorrelations}
+                />
+              )}
+              columns={columns}
+              data={corrData}
+              getRowId={(correlation) => `${correlation.source.uid}-${correlation.uid}`}
+            />
+            <Pagination
+              currentPage={page.current}
+              numberOfPages={
+                correlations.doesContinue === undefined || correlations.doesContinue === null
+                  ? Math.ceil(correlations?.totalCount / correlations?.limit)
+                  : 0
+              }
+              onNavigate={(toPage: number) => {
+                if (changePageFn) {
+                  changePageFn(toPage);
                 }
-                onNavigate={(toPage: number) => {
-                  if (changePageFn) {
-                    changePageFn(toPage);
-                  }
-                  fetchCorrelations({ page: (page.current = toPage) });
-                }}
-                hasNextPage={
-                  correlations.doesContinue ?? page.current < Math.ceil(correlations?.totalCount / correlations?.limit)
-                }
-              />
-            </>
-          )}
-        </div>
-      </Page.Contents>
-    </Page>
+                fetchCorrelations({ page: (page.current = toPage) });
+              }}
+              hasNextPage={
+                correlations.doesContinue ?? page.current < Math.ceil(correlations?.totalCount / correlations?.limit)
+              }
+            />
+          </>
+        )}
+      </div>
+    </PageLayout>
   );
 }
 

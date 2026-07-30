@@ -4,14 +4,14 @@ import {
   type CorrelationSpec,
   generatedAPI as correlationsAPIv0alpha1,
 } from '@grafana/api-clients/rtkq/correlations/v0alpha1';
+import { createCorrelation, type CreateCorrelationParams, generateDefaultLabel } from '@grafana/correlations';
 import { type DataLinkTransformationConfig } from '@grafana/data';
 import { type CorrelationData, reportInteraction, config } from '@grafana/runtime';
 import { getDataSourceInstance } from '@grafana/runtime/unstable';
 import { createErrorNotification } from 'app/core/copy/appNotification';
 import { notifyApp } from 'app/core/reducers/appNotification';
 import { getMessageFromError } from 'app/core/utils/errors';
-import { type CreateCorrelationParams } from 'app/features/correlations/types';
-import { createCorrelation, generateDefaultLabel, getCorrelationsFromStorage } from 'app/features/correlations/utils';
+import { getCorrelationsFromStorage } from 'app/features/correlations/utils';
 import { store } from 'app/store/store';
 import { type ThunkResult } from 'app/types/store';
 

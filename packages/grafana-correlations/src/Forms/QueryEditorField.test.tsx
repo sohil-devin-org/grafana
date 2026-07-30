@@ -1,11 +1,32 @@
+import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { MockDataSourceApi } from 'test/mocks/datasource_srv';
 
+import {
+  type DataQueryRequest,
+  type DataQueryResponse,
+  DataSourceApi,
+  type DataSourceInstanceSettings,
+  type TestDataSourceResponse,
+} from '@grafana/data';
 import { getDataSourceInstance } from '@grafana/runtime/unstable';
 
 import { QueryEditorField } from './QueryEditorField';
+
+class MockDataSourceApi extends DataSourceApi {
+  constructor(name: string) {
+    super({ name } as DataSourceInstanceSettings);
+  }
+
+  query(request: DataQueryRequest): Promise<DataQueryResponse> {
+    return Promise.resolve({ data: [] });
+  }
+
+  testDatasource(): Promise<TestDataSourceResponse> {
+    return Promise.resolve({ message: '', status: '' });
+  }
+}
 
 jest.mock('@grafana/runtime/unstable', () => ({
   ...jest.requireActual('@grafana/runtime/unstable'),
