@@ -2326,6 +2326,42 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@grafana/command-palette@workspace:packages/grafana-command-palette":
+  version: 0.0.0-use.local
+  resolution: "@grafana/command-palette@workspace:packages/grafana-command-palette"
+  dependencies:
+    "@emotion/css": "npm:11.13.5"
+    "@grafana/assistant": "npm:0.1.30"
+    "@grafana/data": "npm:13.2.0-pre"
+    "@grafana/e2e-selectors": "npm:13.2.0-pre"
+    "@grafana/i18n": "npm:13.2.0-pre"
+    "@grafana/runtime": "npm:13.2.0-pre"
+    "@grafana/ui": "npm:13.2.0-pre"
+    "@react-aria/dialog": "npm:3.5.31"
+    "@react-aria/focus": "npm:3.21.2"
+    "@react-aria/overlays": "npm:3.30.0"
+    "@rollup/plugin-node-resolve": "npm:16.0.1"
+    "@testing-library/dom": "npm:10.4.1"
+    "@testing-library/jest-dom": "npm:^6.1.2"
+    "@testing-library/react": "npm:16.3.0"
+    "@types/jest": "npm:^29.5.4"
+    "@types/node": "npm:24.10.1"
+    "@types/react": "npm:18.3.18"
+    esbuild: "npm:0.28.1"
+    jest: "npm:^29.6.4"
+    kbar: "npm:0.1.0-beta.48"
+    react: "npm:^18.3.1"
+    react-virtual: "npm:2.10.4"
+    rollup: "npm:^4.60.1"
+    rollup-plugin-esbuild: "npm:6.2.1"
+    rollup-plugin-node-externals: "npm:^8.0.0"
+    typescript: "npm:@typescript/typescript6@^6.0.2"
+  peerDependencies:
+    react: ^18.0.0
+    react-dom: ^18.0.0
+  languageName: unknown
+  linkType: soft
+
 "@grafana/data@npm:13.2.0-pre, @grafana/data@workspace:*, @grafana/data@workspace:packages/grafana-data":
   version: 0.0.0-use.local
   resolution: "@grafana/data@workspace:packages/grafana-data"
