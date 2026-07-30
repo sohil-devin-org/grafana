@@ -11,9 +11,8 @@ import { Trans } from '@grafana/i18n';
 import { config } from '@grafana/runtime';
 import { type CellProps, Stack, Text, Icon, useStyles2 } from '@grafana/ui';
 import { getSvgSize } from '@grafana/ui/internal';
-import { useGetFolderQueryFacade } from 'app/api/clients/folder/v1beta1/hooks';
 
-import { type LocalPlugin } from '../../plugins/admin/types';
+import { getMigrateToCloudDependencies, type LocalPlugin } from '../dependencies';
 
 import { iconNameForResource } from './resourceInfo';
 import { type ResourceTableItem } from './types';
@@ -124,6 +123,7 @@ function FolderInfo({ data }: { data: ResourceTableItem }) {
   const folderUID = data.refId;
   const skipApiCall = !!data.name && !!data.parentName;
 
+  const { useGetFolderQueryFacade } = getMigrateToCloudDependencies();
   const { data: folderData, isLoading, isError } = useGetFolderQueryFacade(skipApiCall ? undefined : folderUID);
 
   const folderName = data.name || folderData?.title;

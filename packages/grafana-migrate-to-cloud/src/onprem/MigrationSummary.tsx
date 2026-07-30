@@ -4,7 +4,8 @@ import {
 } from '@grafana/api-clients/internal/rtkq/legacy/migrate-to-cloud';
 import { Trans, t } from '@grafana/i18n';
 import { Box, Button, Switch, Space, Stack, Text } from '@grafana/ui';
-import { formatDate } from 'app/core/internationalization/dates';
+
+import { getMigrateToCloudDependencies } from '../dependencies';
 
 import { MigrationInfo } from './MigrationInfo';
 
@@ -34,6 +35,7 @@ const DATE_FORMAT: Intl.DateTimeFormatOptions = {
 };
 
 export function MigrationSummary(props: MigrationSummaryProps) {
+  const { formatDate } = getMigrateToCloudDependencies();
   const {
     session,
     snapshot,

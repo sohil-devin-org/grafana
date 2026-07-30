@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { type MigrateDataResponseItemDto } from '@grafana/api-clients/internal/rtkq/legacy/migrate-to-cloud';
 import { InteractiveTable, Pagination, Stack, type Column, type FetchDataFunc } from '@grafana/ui';
 
-import { type LocalPlugin } from '../../plugins/admin/types';
+import { type LocalPlugin } from '../dependencies';
 
 import { NameCell } from './NameCell';
 import { ResourceDetailsModal } from './ResourceDetailsModal';

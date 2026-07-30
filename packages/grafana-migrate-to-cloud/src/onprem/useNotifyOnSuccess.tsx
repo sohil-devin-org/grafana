@@ -5,7 +5,8 @@ import {
   type SnapshotDto,
 } from '@grafana/api-clients/internal/rtkq/legacy/migrate-to-cloud';
 import { t } from '@grafana/i18n';
-import { useAppNotification } from 'app/core/copy/appNotification';
+
+import { getMigrateToCloudDependencies } from '../dependencies';
 
 import { pluralizeResourceName } from './resourceInfo';
 import { type ResourceTableItem } from './types';
@@ -15,6 +16,7 @@ const SUCCESS_MESSAGE_ITEM_TYPES_THRESHOLD = 4;
 
 export function useNotifySuccessful(snapshot: GetSnapshotResponseDto | undefined) {
   const previousStatusRef = useRef<SnapshotDto['status']>(undefined);
+  const { useAppNotification } = getMigrateToCloudDependencies();
   const notifyApp = useAppNotification();
 
   useEffect(() => {

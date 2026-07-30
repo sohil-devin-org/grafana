@@ -353,6 +353,16 @@ module.exports = [
   },
 
   {
+    // @grafana/migrate-to-cloud is a private package consumed only by the app through the
+    // @grafana-app/source condition, so it may keep using @grafana/*/internal exports.
+    name: 'grafana/migrate-to-cloud-package-overrides',
+    files: ['packages/grafana-migrate-to-cloud/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': ['error', withBaseRestrictedImportsConfig()],
+    },
+  },
+
+  {
     // @grafana/runtime shouldn't be imported from our 'library' NPM packages
     name: 'grafana/packages-that-cant-import-runtime',
     files: [

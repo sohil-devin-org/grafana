@@ -1,9 +1,10 @@
+import '@testing-library/jest-dom';
+
 import { render as rtlRender, screen } from '@testing-library/react';
-import { TestProvider } from 'test/helpers/TestProvider';
 
-import { setBackendSrv, config } from '@grafana/runtime';
-import { backendSrv } from 'app/core/services/backend_srv';
+import { config } from '@grafana/runtime';
 
+import { TestProvider } from '../../tests/provider';
 import {
   wellFormedDashboardMigrationItem,
   wellFormedDatasourceMigrationItem,
@@ -13,8 +14,6 @@ import { registerMockAPI } from '../fixtures/mswAPI';
 import { wellFormedDatasource } from '../fixtures/others';
 
 import { ResourcesTable, type ResourcesTableProps } from './ResourcesTable';
-
-setBackendSrv(backendSrv);
 
 function render(props: Partial<ResourcesTableProps>) {
   rtlRender(
