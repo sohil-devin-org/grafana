@@ -4,7 +4,8 @@ import type { JSX } from 'react';
 import { dateTimeFormat, type GrafanaTheme2, type TimeZone, dateTimeFormatTimeAgo } from '@grafana/data';
 import { Trans, t } from '@grafana/i18n';
 import { DeleteButton, Icon, Tooltip, useStyles2, useTheme2 } from '@grafana/ui';
-import { type ApiKey } from 'app/types/apiKeys';
+
+import { type ApiKey } from '../types';
 
 interface Props {
   tokens: ApiKey[];

@@ -5,20 +5,16 @@ import { OrgRole } from '@grafana/data';
 import { Trans, t } from '@grafana/i18n';
 import { config, getBackendSrv, locationService } from '@grafana/runtime';
 import { Button, Input, Field, FieldSet } from '@grafana/ui';
-import { Form } from 'app/core/components/Form/Form';
-import { Page } from 'app/core/components/Page/Page';
-import { UserRolePicker } from 'app/core/components/RolePicker/UserRolePicker';
-import { fetchRoleOptions, updateUserRoles } from 'app/core/components/RolePicker/api';
-import { RolePickerSelect } from 'app/core/components/RolePickerDrawer/RolePickerSelect';
-import { contextSrv } from 'app/core/services/context_srv';
-import { type Role, AccessControlAction } from 'app/types/accessControl';
-import { type ServiceAccountDTO, type ServiceAccountCreateApiResponse } from 'app/types/serviceaccount';
 
-import { OrgRolePicker } from '../admin/OrgRolePicker';
+import { Form } from './components/Form';
+import { OrgRolePicker } from './components/OrgRolePicker';
+import { getServiceAccountsDeps } from './deps';
+import { AccessControlAction, type Role, type ServiceAccountDTO, type ServiceAccountCreateApiResponse } from './types';
 
 export interface Props {}
 
 const createServiceAccount = async (sa: ServiceAccountDTO) => {
+  const { contextSrv } = getServiceAccountsDeps();
   const result = await getBackendSrv().post('/api/serviceaccounts/', sa);
   await contextSrv.fetchUserPermissions();
   return result;
@@ -27,28 +23,34 @@ const createServiceAccount = async (sa: ServiceAccountDTO) => {
 const updateServiceAccount = async (uid: string, sa: ServiceAccountDTO) =>
   getBackendSrv().patch(`/api/serviceaccounts/${uid}`, sa);
 
-const defaultServiceAccount = {
-  id: 0,
-  uid: '',
-  orgId: contextSrv.user.orgId,
-  role: contextSrv.licensedAccessControlEnabled() ? OrgRole.None : OrgRole.Viewer,
-  tokens: 0,
-  name: '',
-  login: '',
-  isDisabled: false,
-  createdAt: '',
-  teams: [],
+const getDefaultServiceAccount = (): ServiceAccountDTO => {
+  const { contextSrv } = getServiceAccountsDeps();
+  return {
+    id: 0,
+    uid: '',
+    orgId: contextSrv.user.orgId,
+    role: contextSrv.licensedAccessControlEnabled() ? OrgRole.None : OrgRole.Viewer,
+    tokens: 0,
+    name: '',
+    login: '',
+    isDisabled: false,
+    createdAt: '',
+    teams: [],
+  };
 };
 
 export const ServiceAccountCreatePage = ({}: Props): JSX.Element => {
+  const { contextSrv, Page, UserRolePicker, RolePickerSelect, fetchRoleOptions, updateUserRoles } =
+    getServiceAccountsDeps();
   const [roleOptions, setRoleOptions] = useState<Role[]>([]);
   const [pendingRoles, setPendingRoles] = useState<Role[]>([]);
+  const [serviceAccount, setServiceAccount] = useState<ServiceAccountDTO>(getDefaultServiceAccount);
 
   const methods = useForm({
     defaultValues: {
       name: '',
-      role: defaultServiceAccount.role,
-      roleCollection: [defaultServiceAccount.role],
+      role: serviceAccount.role,
+      roleCollection: [serviceAccount.role],
       roles: [],
     },
   });
@@ -58,7 +60,6 @@ export const ServiceAccountCreatePage = ({}: Props): JSX.Element => {
   } = methods;
 
   const currentOrgId = contextSrv.user.orgId;
-  const [serviceAccount, setServiceAccount] = useState<ServiceAccountDTO>(defaultServiceAccount);
 
   useEffect(() => {
     async function fetchOptions() {
@@ -74,7 +75,7 @@ export const ServiceAccountCreatePage = ({}: Props): JSX.Element => {
     if (contextSrv.licensedAccessControlEnabled()) {
       fetchOptions();
     }
-  }, [currentOrgId]);
+  }, [contextSrv, currentOrgId, fetchRoleOptions]);
 
   const onSubmit = useCallback(
     async (data: ServiceAccountDTO) => {
@@ -105,7 +106,7 @@ export const ServiceAccountCreatePage = ({}: Props): JSX.Element => {
       }
       locationService.push(`/org/serviceaccounts/${response.uid}`);
     },
-    [serviceAccount.role, pendingRoles]
+    [contextSrv, updateUserRoles, serviceAccount.role, pendingRoles]
   );
 
   const onRoleChange = (role: OrgRole) => {

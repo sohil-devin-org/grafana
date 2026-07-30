@@ -3,19 +3,30 @@ import userEvent from '@testing-library/user-event';
 import { TestProvider } from 'test/helpers/TestProvider';
 
 import { OrgRole } from '@grafana/data';
-import { type ApiKey } from 'app/types/apiKeys';
-import { type ServiceAccountDTO } from 'app/types/serviceaccount';
+import { Permissions } from 'app/core/components/AccessControl/Permissions';
+import { Page } from 'app/core/components/Page/Page';
+import { UserRolePicker } from 'app/core/components/RolePicker/UserRolePicker';
+import { RolePickerSelect } from 'app/core/components/RolePickerDrawer/RolePickerSelect';
 
 import { ServiceAccountPageUnconnected, type Props } from './ServiceAccountPage';
+import { setServiceAccountsDeps } from './deps';
+import { type ApiKey, type ServiceAccountDTO } from './types';
 
-jest.mock('app/core/services/context_srv', () => ({
+setServiceAccountsDeps({
   contextSrv: {
-    ...jest.requireActual('app/core/services/context_srv').contextSrv,
+    user: { orgId: 1 },
     licensedAccessControlEnabled: () => false,
     hasPermission: () => true,
     hasPermissionInMetadata: () => false,
+    fetchUserPermissions: () => Promise.resolve(),
   },
-}));
+  Page,
+  UserRolePicker,
+  RolePickerSelect,
+  Permissions,
+  fetchRoleOptions: jest.fn().mockResolvedValue([]),
+  updateUserRoles: jest.fn().mockResolvedValue(undefined),
+});
 
 jest.mock('react-router-dom-v5-compat', () => ({
   ...jest.requireActual('react-router-dom-v5-compat'),

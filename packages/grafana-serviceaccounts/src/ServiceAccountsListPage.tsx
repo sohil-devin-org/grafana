@@ -4,6 +4,7 @@ import { connect, type ConnectedProps } from 'react-redux';
 
 import { type GrafanaTheme2, type OrgRole } from '@grafana/data';
 import { Trans, t } from '@grafana/i18n';
+import { config } from '@grafana/runtime';
 import {
   ConfirmModal,
   FilterInput,
@@ -16,15 +17,10 @@ import {
   useStyles2,
   TextLink,
 } from '@grafana/ui';
-import { Page } from 'app/core/components/Page/Page';
-import config from 'app/core/config';
-import { contextSrv } from 'app/core/services/context_srv';
-import { AccessControlAction } from 'app/types/accessControl';
-import { ServiceAccountStateFilter, type ServiceAccountDTO } from 'app/types/serviceaccount';
-import { type StoreState } from 'app/types/store';
 
 import { ServiceAccountTable } from './ServiceAccountTable';
 import { CreateTokenModal, type ServiceAccountToken } from './components/CreateTokenModal';
+import { getServiceAccountsDeps } from './deps';
 import {
   changeQuery,
   changePage,
@@ -35,12 +31,18 @@ import {
   changeStateFilter,
   createServiceAccountToken,
 } from './state/actions';
+import {
+  AccessControlAction,
+  ServiceAccountStateFilter,
+  type ServiceAccountDTO,
+  type ServiceAccountsRootState,
+} from './types';
 
 interface OwnProps {}
 
 export type Props = OwnProps & ConnectedProps<typeof connector>;
 
-function mapStateToProps(state: StoreState) {
+function mapStateToProps(state: ServiceAccountsRootState) {
   return {
     ...state.serviceAccounts,
   };
@@ -86,6 +88,7 @@ export const ServiceAccountsListPageUnconnected = ({
   changeStateFilter,
   createServiceAccountToken,
 }: Props): JSX.Element => {
+  const { contextSrv, Page } = getServiceAccountsDeps();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
   const [isDisableModalOpen, setIsDisableModalOpen] = useState(false);
@@ -98,7 +101,7 @@ export const ServiceAccountsListPageUnconnected = ({
     if (contextSrv.licensedAccessControlEnabled()) {
       fetchACOptions();
     }
-  }, [fetchACOptions, fetchServiceAccounts]);
+  }, [contextSrv, fetchACOptions, fetchServiceAccounts]);
 
   const noServiceAccountsCreated =
     serviceAccounts.length === 0 && serviceAccountStateFilter === ServiceAccountStateFilter.All && !query;

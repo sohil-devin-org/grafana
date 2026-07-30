@@ -1,13 +1,10 @@
 import { debounce } from 'lodash';
 
 import { getBackendSrv } from '@grafana/runtime';
-import { fetchRoleOptions } from 'app/core/components/RolePicker/api';
-import { contextSrv } from 'app/core/services/context_srv';
-import { AccessControlAction } from 'app/types/accessControl';
-import { type ServiceAccountDTO, ServiceAccountStateFilter } from 'app/types/serviceaccount';
-import { type ThunkResult } from 'app/types/store';
 
 import { type ServiceAccountToken } from '../components/CreateTokenModal';
+import { getServiceAccountsDeps } from '../deps';
+import { AccessControlAction, type ServiceAccountDTO, ServiceAccountStateFilter, type ThunkResult } from '../types';
 
 import {
   acOptionsLoaded,
@@ -25,6 +22,7 @@ const BASE_URL = `/api/serviceaccounts`;
 
 export function fetchACOptions(): ThunkResult<void> {
   return async (dispatch) => {
+    const { contextSrv, fetchRoleOptions } = getServiceAccountsDeps();
     try {
       if (contextSrv.licensedAccessControlEnabled() && contextSrv.hasPermission(AccessControlAction.ActionRolesList)) {
         const options = await fetchRoleOptions();
@@ -36,7 +34,7 @@ export function fetchACOptions(): ThunkResult<void> {
   };
 }
 
-interface FetchServiceAccountsParams {
+export interface FetchServiceAccountsParams {
   withLoadingIndicator: boolean;
 }
 
@@ -44,6 +42,7 @@ export function fetchServiceAccounts(
   { withLoadingIndicator }: FetchServiceAccountsParams = { withLoadingIndicator: false }
 ): ThunkResult<void> {
   return async (dispatch, getState) => {
+    const { contextSrv } = getServiceAccountsDeps();
     try {
       if (contextSrv.hasPermission(AccessControlAction.ServiceAccountsRead)) {
         if (withLoadingIndicator) {
