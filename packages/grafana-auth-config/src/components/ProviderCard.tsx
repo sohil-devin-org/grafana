@@ -1,9 +1,9 @@
 import { isIconName } from '@grafana/data';
 import { t } from '@grafana/i18n';
 import { Badge, Card, Icon, TextLink } from '@grafana/ui';
-import { CloudEnterpriseBadge } from 'app/core/components/Branding/CloudEnterpriseBadge';
 
 import { UIMap } from '../constants';
+import { getAuthConfigDeps } from '../deps';
 import { getProviderUrl } from '../utils/url';
 
 type Props = {
@@ -42,6 +42,7 @@ export function ProviderCard({ providerId, enabled, configPath, authType, onClic
 }
 
 export function ProviderSAMLCard() {
+  const { CloudEnterpriseBadge } = getAuthConfigDeps();
   return (
     <Card noMargin>
       {/* eslint-disable-next-line @grafana/i18n/no-untranslated-strings */}
@@ -67,6 +68,7 @@ export function ProviderSAMLCard() {
 }
 
 export function ProviderSCIMCard() {
+  const { CloudEnterpriseBadge } = getAuthConfigDeps();
   return (
     <Card noMargin>
       {/* eslint-disable-next-line @grafana/i18n/no-untranslated-strings */}

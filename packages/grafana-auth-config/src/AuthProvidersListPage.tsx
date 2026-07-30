@@ -1,19 +1,16 @@
 import { type JSX, useEffect, useState } from 'react';
 import { connect, type ConnectedProps } from 'react-redux';
 
-import { GrafanaEdition } from '@grafana/data/internal';
 import { Trans } from '@grafana/i18n';
-import { config, reportInteraction } from '@grafana/runtime';
+import { reportInteraction } from '@grafana/runtime';
 import { Grid, TextLink, ToolbarButton } from '@grafana/ui';
-import { Page } from 'app/core/components/Page/Page';
-import { type StoreState } from 'app/types/store';
-
-import { isOpenSourceBuildOrUnlicenced } from '../admin/EnterpriseAuthFeaturesCard';
 
 import AuthDrawer from './AuthDrawer';
 import ConfigureAuthCTA from './components/ConfigureAuthCTA';
 import { ProviderCard, ProviderSAMLCard, ProviderSCIMCard } from './components/ProviderCard';
+import { getAuthConfigDeps } from './deps';
 import { loadSettings } from './state/actions';
+import { type AuthConfigStoreState } from './store';
 
 import { getRegisteredAuthProviders } from './index';
 
@@ -21,7 +18,7 @@ interface OwnProps {}
 
 export type Props = OwnProps & ConnectedProps<typeof connector>;
 
-function mapStateToProps(state: StoreState) {
+function mapStateToProps(state: AuthConfigStoreState) {
   const { isLoading, providerStatuses, providers } = state.authConfig;
   return {
     isLoading,
@@ -42,6 +39,7 @@ export const AuthConfigPageUnconnected = ({
   loadSettings,
   providers,
 }: Props): JSX.Element => {
+  const { Page, isOpenSourceEdition, isOpenSourceBuildOrUnlicenced } = getAuthConfigDeps();
   useEffect(() => {
     loadSettings();
   }, [loadSettings]);
@@ -94,7 +92,7 @@ export const AuthConfigPageUnconnected = ({
         </Trans>
       }
       actions={
-        config.buildInfo.edition !== GrafanaEdition.OpenSource && (
+        !isOpenSourceEdition() && (
           <ToolbarButton icon="cog" variant="canvas" onClick={() => setShowDrawer(true)}>
             <Trans i18nKey="auth-config.auth-config-page-unconnected.auth-settings">Auth settings</Trans>
           </ToolbarButton>

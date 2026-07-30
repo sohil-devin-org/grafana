@@ -2,7 +2,14 @@ import { type ReactElement } from 'react';
 import { type Validate, type UseFormSetValue } from 'react-hook-form';
 
 import { type IconName, type SelectableValue } from '@grafana/data';
-import { type Settings } from 'app/types/settings';
+export type Settings = { [key: string]: SettingsSection };
+
+export type SettingsSection = Record<string, string>;
+
+export interface UpdateSettingsQuery {
+  updates?: Settings;
+  removals?: Record<string, string[]>;
+}
 export interface AuthProviderInfo {
   id: string;
   type: string;
