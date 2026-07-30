@@ -2,7 +2,13 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { TestProvider } from 'test/helpers/TestProvider';
 
+import { Permissions } from 'app/core/components/AccessControl/Permissions';
+import { Page } from 'app/core/components/Page/Page';
+import { UserRolePicker } from 'app/core/components/RolePicker/UserRolePicker';
+import { RolePickerSelect } from 'app/core/components/RolePickerDrawer/RolePickerSelect';
+
 import { ServiceAccountCreatePage, type Props } from './ServiceAccountCreatePage';
+import { setServiceAccountsDeps } from './deps';
 
 const postMock = jest.fn().mockResolvedValue({});
 const patchMock = jest.fn().mockResolvedValue({});
@@ -33,7 +39,7 @@ jest.mock('@grafana/runtime', () => ({
   },
 }));
 
-jest.mock('app/core/services/context_srv', () => ({
+setServiceAccountsDeps({
   contextSrv: {
     licensedAccessControlEnabled: () => false,
     hasPermission: () => true,
@@ -41,7 +47,13 @@ jest.mock('app/core/services/context_srv', () => ({
     user: { orgId: 1 },
     fetchUserPermissions: () => Promise.resolve(),
   },
-}));
+  Page,
+  UserRolePicker,
+  RolePickerSelect,
+  Permissions,
+  fetchRoleOptions: jest.fn().mockResolvedValue([]),
+  updateUserRoles: jest.fn().mockResolvedValue(undefined),
+});
 
 const setup = (propOverrides: Partial<Props>) => {
   const props: Props = {

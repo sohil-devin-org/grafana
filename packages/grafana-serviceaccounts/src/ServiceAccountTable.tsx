@@ -15,12 +15,10 @@ import {
   IconButton,
   Icon,
 } from '@grafana/ui';
-import { UserRolePicker } from 'app/core/components/RolePicker/UserRolePicker';
-import { contextSrv } from 'app/core/services/context_srv';
-import { type Role, AccessControlAction } from 'app/types/accessControl';
-import { type ServiceAccountDTO } from 'app/types/serviceaccount';
 
-import { OrgRolePicker } from '../admin/OrgRolePicker';
+import { OrgRolePicker } from './components/OrgRolePicker';
+import { getServiceAccountsDeps } from './deps';
+import { AccessControlAction, type Role, type ServiceAccountDTO } from './types';
 
 type Cell<T extends keyof ServiceAccountDTO = keyof ServiceAccountDTO> = CellProps<
   ServiceAccountDTO,
@@ -165,6 +163,7 @@ const getRoleCell = (
   roleOptions: Role[],
   onRoleChange: (role: OrgRole, serviceAccount: ServiceAccountDTO) => void
 ) => {
+  const { contextSrv, UserRolePicker } = getServiceAccountsDeps();
   const displayRolePicker =
     contextSrv.hasPermission(AccessControlAction.ActionRolesList) &&
     contextSrv.hasPermission(AccessControlAction.ActionUserRolesList);
@@ -206,6 +205,7 @@ const getActionsCell = (
   onDisable: (serviceAccount: ServiceAccountDTO) => void,
   onRemoveButtonClick: (serviceAccount: ServiceAccountDTO) => void
 ) => {
+  const { contextSrv } = getServiceAccountsDeps();
   if (isLoading) {
     return <Skeleton width={100} />;
   } else {

@@ -315,24 +315,26 @@ export function getAppRoutes(): RouteDescriptor[] {
           AccessControlAction.ServiceAccountsRead,
           AccessControlAction.ServiceAccountsCreate,
         ]),
-      component: SafeDynamicImport(
-        () =>
-          import(/* webpackChunkName: "ServiceAccountsPage" */ 'app/features/serviceaccounts/ServiceAccountsListPage')
+      component: SafeDynamicImport(() =>
+        import(/* webpackChunkName: "ServiceAccountsPage" */ 'app/features/serviceaccounts')
+          .then(() => import('@grafana/serviceaccounts'))
+          .then((m) => ({ default: m.ServiceAccountsListPage }))
       ),
     },
     {
       path: '/org/serviceaccounts/create',
-      component: SafeDynamicImport(
-        () =>
-          import(
-            /* webpackChunkName: "ServiceAccountCreatePage" */ 'app/features/serviceaccounts/ServiceAccountCreatePage'
-          )
+      component: SafeDynamicImport(() =>
+        import(/* webpackChunkName: "ServiceAccountCreatePage" */ 'app/features/serviceaccounts')
+          .then(() => import('@grafana/serviceaccounts'))
+          .then((m) => ({ default: m.ServiceAccountCreatePage }))
       ),
     },
     {
       path: '/org/serviceaccounts/:id',
-      component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "ServiceAccountPage" */ 'app/features/serviceaccounts/ServiceAccountPage')
+      component: SafeDynamicImport(() =>
+        import(/* webpackChunkName: "ServiceAccountPage" */ 'app/features/serviceaccounts')
+          .then(() => import('@grafana/serviceaccounts'))
+          .then((m) => ({ default: m.ServiceAccountPage }))
       ),
     },
     {

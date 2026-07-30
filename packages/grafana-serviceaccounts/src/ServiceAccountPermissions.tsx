@@ -1,13 +1,12 @@
-import { Permissions } from 'app/core/components/AccessControl/Permissions';
-import { contextSrv } from 'app/core/services/context_srv';
-import { AccessControlAction } from 'app/types/accessControl';
-import { type ServiceAccountDTO } from 'app/types/serviceaccount';
+import { getServiceAccountsDeps } from './deps';
+import { AccessControlAction, type ServiceAccountDTO } from './types';
 
 type ServiceAccountPermissionsProps = {
   serviceAccount: ServiceAccountDTO;
 };
 
 export const ServiceAccountPermissions = (props: ServiceAccountPermissionsProps) => {
+  const { contextSrv, Permissions } = getServiceAccountsDeps();
   const canSetPermissions = contextSrv.hasPermissionInMetadata(
     AccessControlAction.ServiceAccountsPermissionsWrite,
     props.serviceAccount

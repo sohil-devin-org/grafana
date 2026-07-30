@@ -5,17 +5,12 @@ import { useParams } from 'react-router-dom-v5-compat';
 import { type NavModelItem, getTimeZone } from '@grafana/data';
 import { Trans, t } from '@grafana/i18n';
 import { Button, ConfirmModal, IconButton, Stack } from '@grafana/ui';
-import { Page } from 'app/core/components/Page/Page';
-import { contextSrv } from 'app/core/services/context_srv';
-import { AccessControlAction } from 'app/types/accessControl';
-import { type ApiKey } from 'app/types/apiKeys';
-import { type ServiceAccountDTO } from 'app/types/serviceaccount';
-import { type StoreState } from 'app/types/store';
 
 import { ServiceAccountPermissions } from './ServiceAccountPermissions';
 import { CreateTokenModal, type ServiceAccountToken } from './components/CreateTokenModal';
 import { ServiceAccountProfile } from './components/ServiceAccountProfile';
 import { ServiceAccountTokensTable } from './components/ServiceAccountTokensTable';
+import { getServiceAccountsDeps } from './deps';
 import { fetchACOptions } from './state/actions';
 import {
   createServiceAccountToken,
@@ -25,6 +20,7 @@ import {
   loadServiceAccountTokens,
   updateServiceAccount,
 } from './state/actionsServiceAccountPage';
+import { AccessControlAction, type ApiKey, type ServiceAccountDTO, type ServiceAccountsRootState } from './types';
 
 interface OwnProps {
   serviceAccount?: ServiceAccountDTO;
@@ -32,7 +28,7 @@ interface OwnProps {
   isLoading: boolean;
 }
 
-function mapStateToProps(state: StoreState) {
+function mapStateToProps(state: ServiceAccountsRootState) {
   return {
     serviceAccount: state.serviceAccountProfile.serviceAccount,
     tokens: state.serviceAccountProfile.tokens,
@@ -66,6 +62,7 @@ export const ServiceAccountPageUnconnected = ({
   loadServiceAccountTokens,
   updateServiceAccount,
 }: Props): JSX.Element => {
+  const { contextSrv, Page } = getServiceAccountsDeps();
   const [newToken, setNewToken] = useState('');
   const [isTokenModalOpen, setIsTokenModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -98,7 +95,7 @@ export const ServiceAccountPageUnconnected = ({
     if (contextSrv.licensedAccessControlEnabled()) {
       fetchACOptions();
     }
-  }, [loadServiceAccount, loadServiceAccountTokens, id]);
+  }, [contextSrv, loadServiceAccount, loadServiceAccountTokens, id]);
 
   const onProfileChange = (serviceAccount: ServiceAccountDTO) => {
     updateServiceAccount(serviceAccount);

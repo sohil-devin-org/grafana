@@ -15,6 +15,7 @@ export default defineConfig({
       'packages/grafana-ui/**/*.{tsx,ts}',
       'packages/grafana-data/**/*.{tsx,ts}',
       'packages/grafana-migrate-to-cloud/**/*.{tsx,ts}',
+      'packages/grafana-serviceaccounts/**/*.{tsx,ts}',
     ],
     output: 'public/locales/{{language}}/{{namespace}}.json',
     defaultNS: 'grafana',

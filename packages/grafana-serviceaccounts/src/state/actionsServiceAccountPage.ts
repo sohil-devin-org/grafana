@@ -1,9 +1,8 @@
 import { getBackendSrv, locationService } from '@grafana/runtime';
-import { accessControlQueryParam } from 'app/core/utils/accessControl';
-import { type ServiceAccountDTO } from 'app/types/serviceaccount';
-import { type ThunkResult } from 'app/types/store';
 
 import { type ServiceAccountToken } from '../components/CreateTokenModal';
+import { type ServiceAccountDTO, type ThunkResult } from '../types';
+import { accessControlQueryParam } from '../utils/accessControl';
 
 import {
   serviceAccountFetchBegin,

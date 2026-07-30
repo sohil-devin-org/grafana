@@ -7,6 +7,7 @@ import { generatedAPI as preferencesUserAPI } from '@grafana/api-clients/interna
 import { generatedAPI as legacyUserAPI } from '@grafana/api-clients/internal/rtkq/legacy/user';
 import { allReducers as allApiClientReducers } from '@grafana/api-clients/rtkq';
 import { authConfigReducers } from '@grafana/auth-config';
+import { serviceAccountsReducers as serviceAccountsReducer } from '@grafana/serviceaccounts';
 import { supportBundlesReducers as supportBundlesReducer } from '@grafana/support-bundles';
 import { scopeAPIv0alpha1 } from 'app/api/clients/scope/v0alpha1';
 import sharedReducers from 'app/core/reducers';
@@ -26,7 +27,6 @@ import organizationReducers from 'app/features/org/state/reducers';
 import panelsReducers from 'app/features/panel/state/reducers';
 import { reducer as pluginsReducer } from 'app/features/plugins/admin/state/reducer';
 import userReducers from 'app/features/profile/state/reducers';
-import serviceAccountsReducer from 'app/features/serviceaccounts/state/reducers';
 import usersReducers from 'app/features/users/state/reducers';
 import templatingReducers from 'app/features/variables/state/keyedVariablesReducer';
 
