@@ -1,3 +1,5 @@
+import { type ThunkAction, type ThunkDispatch, type UnknownAction } from '@reduxjs/toolkit';
+
 type SupportBundleState = 'complete' | 'error' | 'timeout' | 'pending';
 
 export interface SupportBundle {
@@ -28,3 +30,16 @@ export interface SupportBundleCollector {
 export interface SupportBundleCreateRequest {
   collectors: string[];
 }
+
+/**
+ * Minimal shape of the app store this feature depends on. The app's full
+ * StoreState is structurally assignable to this, so thunks typed against it
+ * can be dispatched from the app store.
+ */
+export interface SupportBundlesRootState {
+  supportBundles: SupportBundlesState;
+}
+
+export type SupportBundlesThunkResult<R> = ThunkAction<R, SupportBundlesRootState, undefined, UnknownAction>;
+
+export type SupportBundlesThunkDispatch = ThunkDispatch<SupportBundlesRootState, undefined, UnknownAction>;

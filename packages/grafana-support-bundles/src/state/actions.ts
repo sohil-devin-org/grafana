@@ -1,12 +1,14 @@
 import { throttle } from 'lodash';
 
 import { getBackendSrv, locationService } from '@grafana/runtime';
-import { type ThunkResult } from 'app/types/store';
+
 import {
   type SupportBundle,
   type SupportBundleCollector,
   type SupportBundleCreateRequest,
-} from 'app/types/supportBundles';
+  type SupportBundlesThunkDispatch,
+  type SupportBundlesThunkResult,
+} from '../types';
 
 import {
   collectorsFetchBegin,
@@ -19,7 +21,7 @@ import {
   supportBundlesLoaded,
 } from './reducers';
 
-export function loadBundles(skipPageRefresh = false): ThunkResult<void> {
+export function loadBundles(skipPageRefresh = false): SupportBundlesThunkResult<void> {
   return async (dispatch) => {
     try {
       if (!skipPageRefresh) {
@@ -33,25 +35,25 @@ export function loadBundles(skipPageRefresh = false): ThunkResult<void> {
   };
 }
 
-const checkBundlesStatusThrottled = throttle(async (dispatch) => {
+const checkBundlesStatusThrottled = throttle(async (dispatch: SupportBundlesThunkDispatch) => {
   const result = await getBackendSrv().get<SupportBundle[]>('/api/support-bundles');
   dispatch(supportBundlesLoaded(result));
 }, 1000);
 
-export function checkBundles(): ThunkResult<void> {
+export function checkBundles(): SupportBundlesThunkResult<void> {
   return async (dispatch) => {
     dispatch(checkBundlesStatusThrottled);
   };
 }
 
-export function removeBundle(uid: string): ThunkResult<void> {
+export function removeBundle(uid: string): SupportBundlesThunkResult<void> {
   return async (dispatch) => {
     await getBackendSrv().delete(`/api/support-bundles/${uid}`);
     dispatch(loadBundles(true));
   };
 }
 
-export function loadSupportBundleCollectors(): ThunkResult<void> {
+export function loadSupportBundleCollectors(): SupportBundlesThunkResult<void> {
   return async (dispatch) => {
     try {
       dispatch(collectorsFetchBegin());
@@ -65,7 +67,7 @@ export function loadSupportBundleCollectors(): ThunkResult<void> {
   };
 }
 
-export function createSupportBundle(data: SupportBundleCreateRequest): ThunkResult<void> {
+export function createSupportBundle(data: SupportBundleCreateRequest): SupportBundlesThunkResult<void> {
   return async (dispatch) => {
     try {
       await getBackendSrv().post('/api/support-bundles', data);
